@@ -20,12 +20,10 @@ function fhtagn(   i,file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,exp
         expected = ""
       }
       # execute line starting '$', producing out & err & exit_code
-      code = substr(l,2)
-      random = rnd()
-      stdOutF = tmpFile(random, "out")
+      stdOutF = tmpFile(random = rnd(), "out")
       stdErrF = tmpFile(random, "err")
-      code = "(" code ") 1>" stdOutF " 2>" stdErrF
-      exitCode = system(code)
+      code = substr(l,2)
+      exitCode = system("(" code ") 1>" stdOutF " 2>" stdErrF)
     } else if (l ~ /^[|@?]/) {
       # parse result block (|@?)
       expected = expected l "\n"
