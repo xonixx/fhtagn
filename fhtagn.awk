@@ -2,18 +2,18 @@
 BEGIN {
   Prog = "fhtagn"
   Tmp = ok("[ -d /dev/shm ]") ? "/dev/shm" : "/tmp"
-  fhtagn()
   srand()
+  fhtagn()
 }
-function fhtagn(   i,file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
+function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
   for (i = 1; i < ARGC; i++) {
     file = ARGV[i]
   }
 
-  while ((getline l < file) > 0) {
+  while ((err = (getline l < file)) > 0) {
     if (l ~ /^\$/) {
       if (testStarted) {
-        testStarted = 0
+        testStarted = 0 # TODO is this correct?
         checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
       } else {
         testStarted = 1
@@ -32,21 +32,21 @@ function fhtagn(   i,file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,exp
       checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
     }
   }
+  if (err < 0) die("error reading file: " file)
   close(file)
   if (testStarted) {
     checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
   }
 }
-function checkTestResult(expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,actualF) {
+function die(err) { print err > "/dev/stderr"; exit 2 }
+function checkTestResult(expected, stdOutF, stdErrF, exitCode, random,   actual,expectF) {
   actual = prefixFile("|",stdOutF) prefixFile("@",stdErrF)
   system("rm -f " stdOutF " " stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode "\n"
   if (expected != actual) {
     # printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
     # use diff to show the difference
-    expectF = tmpFile(random, "exp")
-    actualF = tmpFile(random, "act")
-    print expected > expectF
+    print expected > (expectF = tmpFile(random, "exp"))
     print actual | "diff " expectF " -; rm " expectF
     exit 1
   }

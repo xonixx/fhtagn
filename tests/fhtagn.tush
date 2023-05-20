@@ -1,0 +1,4 @@
+
+$ cd "$MYDIR"; ./fhtagn.awk -- 1.tush
+
+$ cd "$MYDIR"; ./fhtagn.awk 2.tush
