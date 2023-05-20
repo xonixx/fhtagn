@@ -2,6 +2,7 @@
 BEGIN {
   Prog = "fhtagn"
   Tmp = ok("[ -d /dev/shm ]") ? "/dev/shm" : "/tmp"
+  if (!(Diff = ENVIRON["DIFF"])) Diff = "diff"
   srand()
   fhtagn()
 }
@@ -44,10 +45,10 @@ function checkTestResult(expected, stdOutF, stdErrF, exitCode, random,   actual,
   system("rm -f " stdOutF " " stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode "\n"
   if (expected != actual) {
-    # printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
+     printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
     # use diff to show the difference
     print expected > (expectF = tmpFile(random, "exp"))
-    print actual | "diff " expectF " -; rm " expectF
+    print actual | Diff " -u --label expected --label actual " expectF " -; rm " expectF
     exit 1
   }
 }

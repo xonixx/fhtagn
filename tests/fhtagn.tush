@@ -1,4 +1,17 @@
 
-$ cd "$MYDIR"; ./fhtagn.awk -- 1.tush
+$ cd "$MYDIR"; ./fhtagn.awk -- tests/1.tush
 
-$ cd "$MYDIR"; ./fhtagn.awk 2.tush
+$ cd "$MYDIR"; ./fhtagn.awk tests/2.tush
+| --- expected
+| +++ actual
+| @@ -1,4 +1,4 @@
+|  | hello world
+| -@ error msg 444
+| -? 8
+| +@ error msg
+| +? 7
+|
+? 1
+
+$ cd "$MYDIR"; DIFF="$MYDIR/tests/diff.sh" ./fhtagn.awk tests/3.tush
+
