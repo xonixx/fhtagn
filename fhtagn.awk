@@ -29,11 +29,9 @@ function fhtagn(   i,file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,exp
     } else if (l ~ /^[|@?]/) {
       # parse result block (|@?)
       expected = expected l "\n"
-    } else {
-      if (testStarted) {
-        testStarted = 0
-        checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
-      }
+    } else if (testStarted) {
+      testStarted = 0
+      checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
     }
   }
   close(file)
