@@ -5,7 +5,7 @@ BEGIN {
   fhtagn()
   srand()
 }
-function fhtagn(   file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
+function fhtagn(   i,file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
   for (i = 1; i < ARGC; i++) {
     file = ARGV[i]
   }
@@ -22,8 +22,8 @@ function fhtagn(   file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expec
       # execute line starting '$', producing out & err & exit_code
       code = substr(l,2)
       random = rnd()
-      stdOutF = Tmp "/" Prog "." random ".out"
-      stdErrF = Tmp "/" Prog "." random ".err"
+      stdOutF = tmpFile(random, "out")
+      stdErrF = tmpFile(random, "err")
       code = "(" code ") 1>" stdOutF " 2>" stdErrF
       exitCode = system(code)
     } else if (l ~ /^[|@?]/) {
@@ -48,8 +48,8 @@ function checkTestResult(expected, stdOutF, stdErrF, exitCode, random,   actual,
   if (expected != actual) {
     # printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
     # use diff to show the difference
-    expectF = Tmp "/" Prog "." random ".exp"
-    actualF = Tmp "/" Prog "." random ".act"
+    expectF = tmpFile(random, "exp")
+    actualF = tmpFile(random, "act")
     print expected > expectF
     print actual > actualF
     system("diff " expectF " " actualF "; rm " expectF " " actualF)
@@ -64,4 +64,5 @@ function prefixFile(prefix, fname,   l,res) {
   return res
 }
 function rnd() { return int(2000000000 * rand()) }
+function tmpFile(random, ext) { return sprintf("%s/%s.%d.%s", Tmp, Prog, random, ext) }
 function ok(cmd) { return system(cmd) == 0 }
