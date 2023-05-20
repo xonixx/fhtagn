@@ -51,8 +51,7 @@ function checkTestResult(expected, stdOutF, stdErrF, exitCode, random,   actual,
     expectF = tmpFile(random, "exp")
     actualF = tmpFile(random, "act")
     print expected > expectF
-    print actual > actualF
-    system("diff " expectF " " actualF "; rm " expectF " " actualF)
+    print actual | "diff " expectF " -; rm " expectF
     exit 1
   }
 }
