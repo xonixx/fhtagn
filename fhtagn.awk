@@ -6,7 +6,7 @@ BEGIN {
   srand()
 }
 function fhtagn(   file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
-  for (i=1; i<ARGC; i++) {
+  for (i = 1; i < ARGC; i++) {
     file = ARGV[i]
   }
 
@@ -40,11 +40,10 @@ function fhtagn(   file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expec
   if (testStarted) {
     checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
   }
-
-  # TODO rm files
 }
 function checkTestResult(expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,actualF) {
   actual = prefixFile("|",stdOutF) prefixFile("@",stdErrF)
+  system("rm -f " stdOutF " " stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode "\n"
   if (expected != actual) {
     # printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
