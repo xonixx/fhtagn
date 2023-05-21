@@ -3,7 +3,7 @@ BEGIN {
   Prog = "fhtagn"
   Tmp = ok("[ -d /dev/shm ]") ? "/dev/shm" : "/tmp"
   if (!(Diff = ENVIRON["DIFF"])) Diff = "diff"
-  All = "ALL" in ENVIRON
+  All = ENVIRON["ALL"]
   srand()
   Success = 0; Failed = 0
   fhtagn()
