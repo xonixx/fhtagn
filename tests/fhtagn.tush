@@ -44,13 +44,13 @@ $ cd "$MYDIR"; ALL=1 ./fhtagn.awk tests/1.tush tests/2.tush tests/3.tush
 | -? 8
 | +@ error msg
 | +? 7
-|
+| 
 | [tests/3.tush] $ echo bbb
 | --- expected
 | +++ actual
 | @@ -1,2 +1,2 @@
 | -| BBB
 | +| bbb
-|
+| 
 | result=FAIL, failure=2, success=4, total=6
 
