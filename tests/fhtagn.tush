@@ -33,3 +33,24 @@ $ cd "$MYDIR"; ./fhtagn.awk tests/1.tush tests/3.tush
 | +| bbb
 | 
 ? 1
+
+$ cd "$MYDIR"; ALL=1 ./fhtagn.awk tests/1.tush tests/2.tush tests/3.tush
+| [tests/2.tush] $ echo "hello world"; echo "error msg" >&2; exit 7
+| --- expected
+| +++ actual
+| @@ -1,4 +1,4 @@
+|  | hello world
+| -@ error msg 444
+| -? 8
+| +@ error msg
+| +? 7
+|
+| [tests/3.tush] $ echo bbb
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -| BBB
+| +| bbb
+|
+| result=FAIL, failure=2, success=4, total=6
+

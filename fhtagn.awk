@@ -3,13 +3,15 @@ BEGIN {
   Prog = "fhtagn"
   Tmp = ok("[ -d /dev/shm ]") ? "/dev/shm" : "/tmp"
   if (!(Diff = ENVIRON["DIFF"])) Diff = "diff"
+  All = "ALL" in ENVIRON
   srand()
+  Success = 0; Failed = 0
   fhtagn()
 }
 function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
   for (i = 1; i < ARGC; i++) {
     file = ARGV[i]
-#    print "processing: " i, file
+    #    print "processing: " i, file
     while ((err = (getline l < file)) > 0) {
       if (l ~ /^\$/) {
         if (testStarted) # finish previous
@@ -36,20 +38,23 @@ function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted
       checkTestResult(file,code,expected,stdOutF,stdErrF,exitCode,random)
     }
   }
+  if (All) printf "result=%s, failure=%d, success=%d, total=%d\n", Failed ? "FAIL" : "SUCCESS", Failed, Success, Failed + Success
 }
 function die(err) { print err > "/dev/stderr"; exit 2 }
-function checkTestResult(file, code, expected, stdOutF, stdErrF, exitCode, random,   actual,expectF) {
+function checkTestResult(file, code, expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,d) {
   actual = prefixFile("|",stdOutF) prefixFile("@",stdErrF)
   system("rm -f " stdOutF " " stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode "\n"
   if (expected != actual) {
+    Failed++
     #     printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
     # use diff to show the difference
     print expected > (expectF = tmpFile(random, "exp"))
     print "[" file "] $" code
-    print actual | Diff " -u --label expected --label actual " expectF " -; rm " expectF
-    exit 1
-  }
+    print actual | (d = Diff " -u --label expected --label actual " expectF " -; rm " expectF)
+    close(d)
+    if (!All) exit 1
+  } else Success++
 }
 function prefixFile(prefix, fname,   l,res) {
   while ((getline l < fname) > 0) {
@@ -58,6 +63,6 @@ function prefixFile(prefix, fname,   l,res) {
   close(fname)
   return res
 }
-function rnd() { return int(2000000000 * rand()) }
+function rnd() { return int(2147483647 * rand()) }
 function tmpFile(random, ext) { return sprintf("%s/%s.%d.%s", Tmp, Prog, random, ext) }
 function ok(cmd) { return system(cmd) == 0 }
