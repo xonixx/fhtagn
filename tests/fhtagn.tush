@@ -2,6 +2,7 @@
 $ cd "$MYDIR"; ./fhtagn.awk -- tests/1.tush
 
 $ cd "$MYDIR"; ./fhtagn.awk tests/2.tush
+| >>> $ echo "hello world"; echo "error msg" >&2; exit 7
 | --- expected
 | +++ actual
 | @@ -1,4 +1,4 @@
@@ -14,6 +15,7 @@ $ cd "$MYDIR"; ./fhtagn.awk tests/2.tush
 ? 1
 
 $ cd "$MYDIR"; ./fhtagn.awk tests/3.tush
+| >>> $ echo bbb
 | --- expected
 | +++ actual
 | @@ -1,2 +1,2 @@
