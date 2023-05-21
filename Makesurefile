@@ -42,7 +42,7 @@
 
   f=tests/fhtagn.tush
 
-  if DIFF="diff --strip-trailing-cr" tush-check "$f"
+  if DIFF="diff --strip-trailing-cr --ignore-trailing-space" tush-check "$f"
   then
     echo "TESTS PASSED : $f"
   else

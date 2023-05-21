@@ -1,5 +1,5 @@
 
 $ echo aaa
-| AAA
+| aaa
 $ echo bbb
 | BBB

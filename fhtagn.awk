@@ -13,13 +13,10 @@ function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted
 
   while ((err = (getline l < file)) > 0) {
     if (l ~ /^\$/) {
-      if (testStarted) {
-        testStarted = 0 # TODO is this correct?
+      if (testStarted) # finish previous
         checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
-      } else {
-        testStarted = 1
-        expected = ""
-      }
+      testStarted = 1
+      expected = ""
       # execute line starting '$', producing out & err & exit_code
       stdOutF = tmpFile(random = rnd(), "out")
       stdErrF = tmpFile(random, "err")
@@ -45,7 +42,7 @@ function checkTestResult(expected, stdOutF, stdErrF, exitCode, random,   actual,
   system("rm -f " stdOutF " " stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode "\n"
   if (expected != actual) {
-     printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
+    #     printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
     # use diff to show the difference
     print expected > (expectF = tmpFile(random, "exp"))
     print actual | Diff " -u --label expected --label actual " expectF " -; rm " expectF

@@ -10,8 +10,14 @@ $ cd "$MYDIR"; ./fhtagn.awk tests/2.tush
 | -? 8
 | +@ error msg
 | +? 7
-|
+| 
 ? 1
 
-$ cd "$MYDIR"; DIFF="$MYDIR/tests/diff.sh" ./fhtagn.awk tests/3.tush
-
+$ cd "$MYDIR"; ./fhtagn.awk tests/3.tush
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -| BBB
+| +| bbb
+| 
+? 1
