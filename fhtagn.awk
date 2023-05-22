@@ -12,7 +12,7 @@ function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted
   for (i = 1; i < ARGC; i++) {
     file = ARGV[i]
     #    print "processing: " i, file
-    while ((err = (getline l < file)) > 0) {
+    while ((err = getline l < file) > 0) {
       if (l ~ /^\$/) {
         if (testStarted) # finish previous
           checkTestResult(file,code,expected,stdOutF,stdErrF,exitCode,random)
@@ -56,10 +56,11 @@ function checkTestResult(file, code, expected, stdOutF, stdErrF, exitCode, rando
     if (!All) exit 1
   } else Success++
 }
-function prefixFile(prefix, fname,   l,res) {
-  while ((getline l < fname) > 0) {
+function prefixFile(prefix, fname,   l,res,err) {
+  while ((err = getline l < fname) > 0) {
     res = res prefix " " l "\n"
   }
+  if (err) die("error reading file: " fname)
   close(fname)
   return res
 }
