@@ -1,25 +1,32 @@
 #!/usr/bin/awk -f
 BEGIN {
   Prog = "fhtagn"
-  Tmp = ok("[ -d /dev/shm ]") ? "/dev/shm" : "/tmp"
+  initTmpRnd()
   if (!(Diff = ENVIRON["DIFF"])) Diff = "diff"
   All = ENVIRON["ALL"]
   srand()
   Success = 0; Failed = 0
   fhtagn()
 }
+function initTmpRnd(   c) {
+  c = "[ -d /dev/shm ] && echo /dev/shm || echo /tmp ; echo $$"
+  c | getline Tmp
+  c | getline Rnd # additional source of "random"
+#  print Tmp "|" Rnd
+  close(c)
+}
 function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
   for (i = 1; i < ARGC; i++) {
     file = ARGV[i]
     #    print "processing: " i, file
-    while ((err = (getline l < file)) > 0) {
+    while ((err = getline l < file) > 0) {
       if (l ~ /^\$/) {
         if (testStarted) # finish previous
           checkTestResult(file,code,expected,stdOutF,stdErrF,exitCode,random)
         testStarted = 1
         expected = ""
         # execute line starting '$', producing out & err & exit_code
-        stdOutF = tmpFile(random = rnd(), "out")
+        stdOutF = tmpFile(random = rndS(), "out")
         stdErrF = tmpFile(random, "err")
         code = substr(l,2)
         exitCode = system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
@@ -56,13 +63,13 @@ function checkTestResult(file, code, expected, stdOutF, stdErrF, exitCode, rando
     if (!All) exit 1
   } else Success++
 }
-function prefixFile(prefix, fname,   l,res) {
-  while ((getline l < fname) > 0) {
+function prefixFile(prefix, fname,   l,res,err) {
+  while ((err = getline l < fname) > 0) {
     res = res prefix " " l "\n"
   }
+  if (err) die("error reading file: " fname)
   close(fname)
   return res
 }
-function rnd() { return int(2147483647 * rand()) }
-function tmpFile(random, ext) { return sprintf("%s/%s.%d.%s", Tmp, Prog, random, ext) }
-function ok(cmd) { return system(cmd) == 0 }
+function rndS() { return int(2147483647 * rand()) "." Rnd }
+function tmpFile(random, ext) { return sprintf("%s/%s.%s.%s", Tmp, Prog, random, ext) }

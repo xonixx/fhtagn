@@ -37,15 +37,30 @@
 @depends_on tested
 
 @goal tested
-@depends_on tush_installed
-  export PATH="$PATH:$MYDIR/soft/tush/bin"
+@depends_on tested_by @args 'tush'
+@depends_on tested_by @args 'fhtagn'
 
+@goal tested_by @params TOOL
+@depends_on tush_installed
   f=tests/fhtagn.tush
 
-  if DIFF="diff --strip-trailing-cr --ignore-trailing-space" tush-check "$f"
+  echo "Testing with $TOOL..."
+
+  test_file() {
+    if [[ $TOOL == "tush" ]]
+    then
+      export PATH="$PATH:$MYDIR/soft/tush/bin"
+      DIFF="diff --strip-trailing-cr --ignore-trailing-space" tush-check "$f"
+    else
+      ./fhtagn.awk "$f"
+    fi
+  }
+
+  if test_file
   then
     echo "TESTS PASSED : $f"
   else
     echo >&2 "!!! TESTS FAILED !!! : $f"
     exit 1
   fi
+
