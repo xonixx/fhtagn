@@ -1,12 +1,19 @@
 #!/usr/bin/awk -f
 BEGIN {
   Prog = "fhtagn"
-  Tmp = ok("[ -d /dev/shm ]") ? "/dev/shm" : "/tmp"
+  initTmpRnd()
   if (!(Diff = ENVIRON["DIFF"])) Diff = "diff"
   All = ENVIRON["ALL"]
   srand()
   Success = 0; Failed = 0
   fhtagn()
+}
+function initTmpRnd(   c) {
+  c = "[ -d /dev/shm ] && echo /dev/shm || echo /tmp ; echo $$"
+  c | getline Tmp
+  c | getline Rnd # additional source of "random"
+#  print Tmp "|" Rnd
+  close(c)
 }
 function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
   for (i = 1; i < ARGC; i++) {
@@ -19,7 +26,7 @@ function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted
         testStarted = 1
         expected = ""
         # execute line starting '$', producing out & err & exit_code
-        stdOutF = tmpFile(random = rnd(), "out")
+        stdOutF = tmpFile(random = rndS(), "out")
         stdErrF = tmpFile(random, "err")
         code = substr(l,2)
         exitCode = system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
@@ -64,6 +71,5 @@ function prefixFile(prefix, fname,   l,res,err) {
   close(fname)
   return res
 }
-function rnd() { return int(2147483647 * rand()) }
-function tmpFile(random, ext) { return sprintf("%s/%s.%d.%s", Tmp, Prog, random, ext) }
-function ok(cmd) { return system(cmd) == 0 }
+function rndS() { return int(2147483647 * rand()) "." Rnd }
+function tmpFile(random, ext) { return sprintf("%s/%s.%s.%s", Tmp, Prog, random, ext) }
