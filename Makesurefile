@@ -37,12 +37,24 @@
 @depends_on tested
 
 @goal tested
+@depends_on tested_by_bwk
 @depends_on tested_by @args 'tush'   './fhtagn.awk'
 @depends_on tested_by @args 'tush'   'gawk -f ./fhtagn.awk'
 @depends_on tested_by @args 'tush'   'mawk -f ./fhtagn.awk'
 @depends_on tested_by @args 'fhtagn' './fhtagn.awk'
 @depends_on tested_by @args 'fhtagn' 'gawk -f ./fhtagn.awk'
 @depends_on tested_by @args 'fhtagn' 'mawk -f ./fhtagn.awk'
+@depends_on tested_by_busybox_awk
+
+@goal tested_by_bwk
+@depends_on installed_bwk
+@depends_on tested_by @args 'tush'   './soft/bwk -f ./fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' './soft/bwk -f ./fhtagn.awk'
+
+@goal tested_by_busybox_awk
+@depends_on installed_busybox
+@depends_on tested_by @args 'tush'   './soft/busybox awk -f ./fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' './soft/busybox awk -f ./fhtagn.awk'
 
 @goal tested_by @params TOOL FHTAGN
 @depends_on tush_installed
@@ -67,4 +79,38 @@
     echo >&2 "!!! TESTS FAILED !!! : $f"
     exit 1
   fi
+
+@goal installed_bwk @private
+@reached_if [[ -f soft/bwk ]]
+@depends_on soft_folder_created
+  echo
+  echo "Fetching BWK..."
+  echo
+
+  cd "soft"
+
+  wget https://github.com/onetrueawk/awk/archive/refs/heads/master.tar.gz -Obwk.tar.gz
+  tar xzvf bwk.tar.gz
+  rm bwk.tar.gz
+
+  echo
+  echo "Compile BWK..."
+  echo
+
+  cd "awk-master"
+
+  make
+
+  mv a.out ../bwk
+
+  cd ..
+  ./bwk --version
+  rm -r awk-master
+
+@goal installed_busybox @private
+@reached_if [[ -x ./soft/busybox ]]
+  wget 'https://busybox.net/downloads/binaries/1.31.0-i686-uclibc/busybox' -O ./soft/busybox
+  chmod +x ./soft/busybox
+  echo "Installed: $(./soft/busybox | head -n 1)"
+
 
