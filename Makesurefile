@@ -75,6 +75,7 @@
   f=tests/fhtagn.tush
 
   echo "Testing with $TOOL ($FHTAGN)..."
+  export FHTAGN
 
   test_file() {
     if [[ $TOOL == "tush" ]]
