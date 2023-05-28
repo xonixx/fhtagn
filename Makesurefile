@@ -81,7 +81,7 @@
     if [[ $TOOL == "tush" ]]
     then
       export PATH="$PATH:$MYDIR/soft/tush/bin"
-      tush-check "$f"
+      DIFF="diff --strip-trailing-cr" tush-check "$f"
     else
       ./fhtagn.awk "$f"
     fi
