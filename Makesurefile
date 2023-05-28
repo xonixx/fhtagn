@@ -2,6 +2,8 @@
 @options timing
 
 @define TUSH_REPO='https://github.com/adolfopa/tush'
+@define GOAWK_VERSION='1.23.1'
+@define GOAWK="goawk$GOAWK_VERSION"
 
 @goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
@@ -45,6 +47,7 @@
 @depends_on tested_by @args 'fhtagn' 'gawk -f ./fhtagn.awk'
 @depends_on tested_by @args 'fhtagn' 'mawk -f ./fhtagn.awk'
 @depends_on tested_by_busybox_awk
+@depends_on tested_by_goawk
 
 @goal tested_by_bwk
 @depends_on installed_bwk
@@ -55,6 +58,11 @@
 @depends_on installed_busybox
 @depends_on tested_by @args 'tush'   './soft/busybox awk -f ./fhtagn.awk'
 @depends_on tested_by @args 'fhtagn' './soft/busybox awk -f ./fhtagn.awk'
+
+@goal tested_by_goawk
+@depends_on installed_goawk
+@depends_on tested_by @args 'tush'   './soft/goawk1.23.1 -f ./fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' './soft/goawk1.23.1 -f ./fhtagn.awk'
 
 @goal tested_by @params TOOL FHTAGN
 @depends_on tush_installed
@@ -112,5 +120,31 @@
   wget 'https://busybox.net/downloads/binaries/1.31.0-i686-uclibc/busybox' -O ./soft/busybox
   chmod +x ./soft/busybox
   echo "Installed: $(./soft/busybox | head -n 1)"
+
+@goal installed_goawk @private
+@reached_if [[ -f soft/$GOAWK ]]
+@depends_on soft_folder_created
+  echo
+  echo "Fetching GoAWK $GOAWK_VERSION ..."
+  echo
+
+  cd "soft"
+
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    os="linux"
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    os="darwin"
+  else
+    >&2 echo "Unknown OS"
+    exit 1
+  fi
+
+  F=goawk_v${GOAWK_VERSION}_${os}_amd64.tar.gz
+  wget "https://github.com/benhoyt/goawk/releases/download/v$GOAWK_VERSION/$F"
+  tar xzvf "$F" goawk
+  rm "$F"
+
+  mv goawk $GOAWK
+  "./$GOAWK" --version
 
 
