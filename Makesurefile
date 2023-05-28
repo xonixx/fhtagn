@@ -46,6 +46,10 @@
 
   echo "Testing with $TOOL..."
 
+  export FHTAGN="./fhtagn.awk"
+  export FHTAGN="gawk -f ./fhtagn.awk"
+  export FHTAGN="mawk -f ./fhtagn.awk"
+
   test_file() {
     if [[ $TOOL == "tush" ]]
     then
