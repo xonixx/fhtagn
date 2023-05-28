@@ -37,18 +37,18 @@
 @depends_on tested
 
 @goal tested
-@depends_on tested_by @args 'tush'
-@depends_on tested_by @args 'fhtagn'
+@depends_on tested_by @args 'tush'   './fhtagn.awk'
+@depends_on tested_by @args 'tush'   'gawk -f ./fhtagn.awk'
+@depends_on tested_by @args 'tush'   'mawk -f ./fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' './fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' 'gawk -f ./fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' 'mawk -f ./fhtagn.awk'
 
-@goal tested_by @params TOOL
+@goal tested_by @params TOOL FHTAGN
 @depends_on tush_installed
   f=tests/fhtagn.tush
 
-  echo "Testing with $TOOL..."
-
-  export FHTAGN="./fhtagn.awk"
-  export FHTAGN="gawk -f ./fhtagn.awk"
-  export FHTAGN="mawk -f ./fhtagn.awk"
+  echo "Testing with $TOOL ($FHTAGN)..."
 
   test_file() {
     if [[ $TOOL == "tush" ]]

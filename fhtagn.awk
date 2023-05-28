@@ -57,6 +57,7 @@ function checkTestResult(file, code, expected, stdOutF, stdErrF, exitCode, rando
     #     printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
     # use diff to show the difference
     print expected > (expectF = tmpFile(random, "exp"))
+    close(expectF)
     print "[" file "] $" code
     print actual | (d = Diff " -u --label expected --label actual " expectF " -; rm " expectF)
     close(d)
