@@ -39,20 +39,26 @@
 @depends_on tested
 
 @goal tested
+@depends_on tested_by_default_awk
 @depends_on tested_by_bwk
-@depends_on tested_by @args 'tush'   './fhtagn.awk'
-@depends_on tested_by @args 'tush'   'gawk -f ./fhtagn.awk'
+@depends_on tested_by_gawk
 @depends_on tested_by @args 'tush'   'mawk -f ./fhtagn.awk'
-@depends_on tested_by @args 'fhtagn' './fhtagn.awk'
-@depends_on tested_by @args 'fhtagn' 'gawk -f ./fhtagn.awk'
 @depends_on tested_by @args 'fhtagn' 'mawk -f ./fhtagn.awk'
 @depends_on tested_by_busybox_awk
-@depends_on tested_by_goawk
+#@depends_on tested_by_goawk
 
 @goal tested_by_bwk
 @depends_on installed_bwk
 @depends_on tested_by @args 'tush'   './soft/bwk -f ./fhtagn.awk'
 @depends_on tested_by @args 'fhtagn' './soft/bwk -f ./fhtagn.awk'
+
+@goal tested_by_gawk
+@depends_on tested_by @args 'tush'   'gawk -f ./fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' 'gawk -f ./fhtagn.awk'
+
+@goal tested_by_default_awk
+@depends_on tested_by @args 'tush'   './fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' './fhtagn.awk'
 
 @goal tested_by_busybox_awk
 @depends_on installed_busybox
