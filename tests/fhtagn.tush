@@ -1,4 +1,8 @@
 
+$ cd "$MYDIR"; $FHTAGN -- absent
+@ error reading file: absent
+? 2
+
 $ cd "$MYDIR"; $FHTAGN -- tests/1.tush
 
 $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/2.tush

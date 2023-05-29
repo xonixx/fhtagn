@@ -5,14 +5,14 @@ BEGIN {
   if (!(Diff = ENVIRON["DIFF"])) Diff = "diff"
   All = ENVIRON["ALL"]
   srand()
-  Success = 0; Failed = 0
+  Success = Failed = 0
   fhtagn()
 }
 function initTmpRnd(   c) {
   c = "[ -d /dev/shm ] && echo /dev/shm || echo /tmp ; echo $$"
   c | getline Tmp
   c | getline Rnd # additional source of "random"
-#  print Tmp "|" Rnd
+  #  print Tmp "|" Rnd
   close(c)
 }
 function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
@@ -38,7 +38,7 @@ function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted
         checkTestResult(file,code,expected,stdOutF,stdErrF,exitCode,random)
       }
     }
-    if (err < 0) die("error reading file: " file)
+    if (err) die("error reading file: " file)
     close(file)
     if (testStarted) {
       testStarted = 0
@@ -65,9 +65,8 @@ function checkTestResult(file, code, expected, stdOutF, stdErrF, exitCode, rando
   } else Success++
 }
 function prefixFile(prefix, fname,   l,res,err) {
-  while ((err = getline l < fname) > 0) {
+  while ((err = getline l < fname) > 0)
     res = res prefix " " l "\n"
-  }
   if (err) die("error reading file: " fname)
   close(fname)
   return res
