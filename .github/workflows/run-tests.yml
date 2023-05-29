@@ -23,12 +23,31 @@ jobs:
         run: |
           ./makesure
 
-  win:
-    name: "Win / Mac"
+  macos:
+    name: "macOS"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019, windows-2022, macos-11, macos-12, macos-13 ]
+        os: [ macos-11, macos-12, macos-13 ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        id: cache-soft
+        with:
+          path: soft
+          key: ${{ matrix.os }}-soft--macos
+
+      - name: "run tests"
+        run: |
+          ./makesure tested_by_default_awk
+
+  win:
+    name: "Win"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-2019, windows-2022 ]
     steps:
       - uses: actions/checkout@v3
 
