@@ -19,7 +19,7 @@ Run the tests:
 ./fhtagn.awk tests.tush
 ```
 
-In fact this tool is a re-implementation of [darius/tush](https://github.com/darius/tush), [adolfopa/tush](https://github.com/adolfopa/tush).
+In fact this is a re-implementation of [darius/tush](https://github.com/darius/tush), [adolfopa/tush](https://github.com/adolfopa/tush).
 But simpler (single tiny AWK script) and faster, because:
                       
 - it uses `/dev/shm` where available instead of `/tmp`
