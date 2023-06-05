@@ -12,13 +12,11 @@ function initTmpRnd(   c) {
   c = "[ -d /dev/shm ] && echo /dev/shm || echo /tmp ; echo $$"
   c | getline Tmp
   c | getline Rnd # additional source of "random"
-  #  print Tmp "|" Rnd
   close(c)
 }
 function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
   for (i = 1; i < ARGC; i++) {
     file = ARGV[i]
-    #    print "processing: " i, file
     while ((err = getline l < file) > 0) {
       if (l ~ /^\$/) {
         if (testStarted) # finish previous
