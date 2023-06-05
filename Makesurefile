@@ -154,4 +154,16 @@
   mv goawk $GOAWK
   "./$GOAWK" --version
 
+@goal update_readme
+@doc 'updates the README.md with the current output of the tool'
+  awk '
+  !Off
+  Examples {
+    if (/^\$/) { Off=1; system(substr($0,2)) }
+    else if (/^```$/ && Off) { Off=0; print }
+  }
+  /## Usage/ { Examples=1 }
+  ' README.md > README.md.1
+  mv README.md.1 README.md
+
 
