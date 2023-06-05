@@ -14,39 +14,40 @@ function initTmpRnd(   c) {
   c | getline Rnd # additional source of "random"
   close(c)
 }
-function fhtagn(   i,file,err,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
+function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
   for (i = 1; i < ARGC; i++) {
     file = ARGV[i]
-    while ((err = getline l < file) > 0) {
+    for (nr = 1; (err = getline l < file) > 0; nr++) {
       if (l ~ /^\$/) {
         if (testStarted) # finish previous
-          checkTestResult(file,code,expected,stdOutF,stdErrF,exitCode,random)
+          checkTestResult(file,code,line,expected,stdOutF,stdErrF,exitCode,random)
         testStarted = 1
         expected = ""
         # execute line starting '$', producing out & err & exit_code
         stdOutF = tmpFile(random = rndS(), "out")
         stdErrF = tmpFile(random, "err")
         code = substr(l,2)
+        line = nr
         exitCode = system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
       } else if (l ~ /^[|@?]/) {
         # parse result block (|@?)
         expected = expected l "\n"
       } else if (testStarted) {
         testStarted = 0
-        checkTestResult(file,code,expected,stdOutF,stdErrF,exitCode,random)
+        checkTestResult(file,code,line,expected,stdOutF,stdErrF,exitCode,random)
       }
     }
     if (err) die("error reading file: " file)
     close(file)
     if (testStarted) {
       testStarted = 0
-      checkTestResult(file,code,expected,stdOutF,stdErrF,exitCode,random)
+      checkTestResult(file,code,line,expected,stdOutF,stdErrF,exitCode,random)
     }
   }
   if (All) printf "result=%s, failure=%d, success=%d, total=%d\n", Failed ? "FAIL" : "SUCCESS", Failed, Success, Failed + Success
 }
 function die(err) { print err > "/dev/stderr"; exit 2 }
-function checkTestResult(file, code, expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,d) {
+function checkTestResult(file, code, line, expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,d) {
   actual = prefixFile("|",stdOutF) prefixFile("@",stdErrF)
   system("rm -f " stdOutF " " stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode "\n"
@@ -56,7 +57,7 @@ function checkTestResult(file, code, expected, stdOutF, stdErrF, exitCode, rando
     # use diff to show the difference
     print expected > (expectF = tmpFile(random, "exp"))
     close(expectF)
-    print "[" file "] $" code
+    print file ":" line ": $" code
     print actual | (d = Diff " -u --label expected --label actual " expectF " -; rm " expectF)
     close(d)
     if (!All) exit 1

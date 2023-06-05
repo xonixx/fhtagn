@@ -6,7 +6,7 @@ $ cd "$MYDIR"; $FHTAGN -- absent
 $ cd "$MYDIR"; $FHTAGN -- tests/1.tush
 
 $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/2.tush
-| [tests/2.tush] $ echo "hello world"; echo "error msg" >&2; exit 7
+| tests/2.tush:10: $ echo "hello world"; echo "error msg" >&2; exit 7
 | --- expected
 | +++ actual
 | @@ -1,4 +1,4 @@
@@ -19,7 +19,7 @@ $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/2.tush
 ? 1
 
 $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/3.tush
-| [tests/3.tush] $ echo bbb
+| tests/3.tush:4: $ echo bbb
 | --- expected
 | +++ actual
 | @@ -1,2 +1,2 @@
@@ -29,7 +29,7 @@ $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/3.tush
 ? 1
 
 $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/3.tush
-| [tests/3.tush] $ echo bbb
+| tests/3.tush:4: $ echo bbb
 | --- expected
 | +++ actual
 | @@ -1,2 +1,2 @@
@@ -39,7 +39,7 @@ $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/3.tush
 ? 1
 
 $ cd "$MYDIR"; ALL=1 ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/2.tush tests/3.tush
-| [tests/2.tush] $ echo "hello world"; echo "error msg" >&2; exit 7
+| tests/2.tush:10: $ echo "hello world"; echo "error msg" >&2; exit 7
 | --- expected
 | +++ actual
 | @@ -1,4 +1,4 @@
@@ -49,7 +49,7 @@ $ cd "$MYDIR"; ALL=1 ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/2.tush test
 | +@ error msg
 | +? 7
 | ---blank---
-| [tests/3.tush] $ echo bbb
+| tests/3.tush:4: $ echo bbb
 | --- expected
 | +++ actual
 | @@ -1,2 +1,2 @@
