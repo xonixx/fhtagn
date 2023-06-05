@@ -26,3 +26,60 @@ But simpler (single tiny AWK script) and faster, because:
 - it compares the expected result with the actual in the code and only calls `diff` to show the difference if they don't match
 - it doesn't create a sandbox folder for each test
 - it doesn't use `mktemp` but rather generates random name in the code
+
+## Usage
+
+```
+./fhtagn.awk f1.tush [ f2.tush [ f3.tush [...] ] ]
+```
+This will stop on the first error found.
+
+Example:
+```
+$ ./fhtagn.awk tests/1.tush tests/2.tush tests/3.tush 
+[tests/2.tush] $ echo "hello world"; echo "error msg" >&2; exit 7
+--- expected
++++ actual
+@@ -1,4 +1,4 @@
+ | hello world
+-@ error msg 444
+-? 8
++@ error msg
++? 7
+```
+
+### Fail at the end
+      
+Set `ALL=1` environment variable.
+
+This runs all tests, collects all errors, and shows the stats at the end.
+```
+ALL=1 ./fhtagn.awk f1.tush [ f2.tush [ f3.tush [...] ] ]
+```
+
+Useful for running in CI.
+
+Example:
+```
+$ ALL=1 ./fhtagn.awk tests/1.tush tests/2.tush tests/3.tush 
+[tests/2.tush] $ echo "hello world"; echo "error msg" >&2; exit 7
+--- expected
++++ actual
+@@ -1,4 +1,4 @@
+ | hello world
+-@ error msg 444
+-? 8
++@ error msg
++? 7
+ 
+[tests/3.tush] $ echo bbb
+--- expected
++++ actual
+@@ -1,2 +1,2 @@
+-| BBB
++| bbb
+ 
+result=FAIL, failure=2, success=4, total=6
+```
+
+
