@@ -80,7 +80,7 @@ tests/3.tush:4: $ echo bbb
 -| BBB
 +| bbb
  
-result=FAIL, failure=2, success=4, total=6
+result=FAIL, failure=2, success=4, total=6, files=3
 ```
 
 
