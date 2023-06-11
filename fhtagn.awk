@@ -14,7 +14,7 @@ function initTmpRnd(   c) {
   c | getline Rnd # additional source of "random"
   close(c)
 }
-function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
+function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,testStarted,expected,hasMoreCode) {
   for (i = 1; i < ARGC; i++) {
     file = ARGV[i]
     for (nr = 1; (err = getline l < file) > 0; nr++) {
@@ -29,12 +29,11 @@ function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,tes
         code = substr(l,2)
         line = nr
         if (!(hasMoreCode = l ~ /\\$/))
-          exitCode = system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
+          exitCode = run(code,stdOutF,stdErrF)
       } else if (hasMoreCode) {
         code = code "\n" l
-        hasMoreCode = l ~ /\\$/
         if (!(hasMoreCode = l ~ /\\$/))
-          exitCode = system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
+          exitCode = run(code,stdOutF,stdErrF)
       } else if (l ~ /^[|@?]/) {
         # parse result block (|@?)
         expected = expected l "\n"
@@ -75,6 +74,9 @@ function prefixFile(prefix, fname,   l,res,err) {
   if (err) die("error reading file: " fname)
   close(fname)
   return res
+}
+function run(code,stdOutF,stdErrF) {
+  return system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
 }
 function rndS() { return int(2147483647 * rand()) "." Rnd }
 function tmpFile(random, ext) { return sprintf("%s/%s.%s.%s", Tmp, Prog, random, ext) }
