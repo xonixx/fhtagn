@@ -28,7 +28,13 @@ function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,tes
         stdErrF = tmpFile(random, "err")
         code = substr(l,2)
         line = nr
-        exitCode = system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
+        if (!(hasMoreCode = l ~ /\\$/))
+          exitCode = system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
+      } else if (hasMoreCode) {
+        code = code "\n" l
+        hasMoreCode = l ~ /\\$/
+        if (!(hasMoreCode = l ~ /\\$/))
+          exitCode = system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
       } else if (l ~ /^[|@?]/) {
         # parse result block (|@?)
         expected = expected l "\n"

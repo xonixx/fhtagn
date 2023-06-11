@@ -58,3 +58,4 @@ $ cd "$MYDIR"; ALL=1 ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/2.tush test
 | ---blank---
 | result=FAIL, failure=2, success=4, total=6, files=3
 
+$ cd "$MYDIR"; $FHTAGN tests/4-multiline.tush
