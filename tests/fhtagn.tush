@@ -58,4 +58,14 @@ $ cd "$MYDIR"; ALL=1 ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/2.tush test
 | ---blank---
 | result=FAIL, failure=2, success=4, total=6, files=3
 
-$ cd "$MYDIR"; $FHTAGN tests/4-multiline.tush
+$ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/4-multiline.tush
+| tests/4-multiline.tush:25: $ echo 111; \
+|   echo 222
+| --- expected
+| +++ actual
+| @@ -1,3 +1,3 @@
+|  | 111
+| -| 777
+| +| 222
+| ---blank---
+? 1
