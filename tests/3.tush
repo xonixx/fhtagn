@@ -1,4 +1,7 @@
 
+testing the 2nd test goes immediately after the 1st
+===================================================
+
 $ echo aaa
 | aaa
 $ echo bbb

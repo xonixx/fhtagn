@@ -1,11 +1,13 @@
 
 success
+=======
 
 $ echo OK
 | OK
 
 
 error
+=====
 
 $ echo "hello world"; echo "error msg" >&2; exit 7
 | hello world
