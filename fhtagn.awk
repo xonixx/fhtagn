@@ -8,6 +8,7 @@ BEGIN {
   Success = Failed = 0
   fhtagn()
 }
+END { if (ToDel) system("rm -f" ToDel) }
 function initTmpRnd(   c) {
   c = "[ -d /dev/shm ] && echo /dev/shm || echo /tmp ; echo $$"
   c | getline Tmp
@@ -24,8 +25,7 @@ function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,tes
         testStarted = 1
         expected = ""
         # execute line starting '$', producing out & err & exit_code
-        stdOutF = tmpFile(random = rndS(), "out")
-        stdErrF = tmpFile(random, "err")
+        ToDel = ToDel " " (stdOutF = tmpFile(random = rndS(), "out")) " " (stdErrF = tmpFile(random, "err"))
         code = substr(l,2)
         line = nr
         if (!(hasMoreCode = l ~ /\\$/))
@@ -54,7 +54,6 @@ function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,tes
 function die(err) { print err > "/dev/stderr"; exit 2 }
 function checkTestResult(file, code, line, expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,d) {
   actual = prefixFile("|",stdOutF) prefixFile("@",stdErrF)
-  system("rm -f " stdOutF " " stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode "\n"
   if (expected != actual) {
     Failed++
