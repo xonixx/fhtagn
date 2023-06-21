@@ -77,13 +77,32 @@
   echo "Testing with $TOOL ($FHTAGN)..."
   export FHTAGN
 
+  calc_temp_files() {
+    local tmp_count=$(find /tmp -maxdepth 1 -type f -name 'fhtagn.*' | wc -l)
+    local cnt
+    (( cnt = tmp_count ))
+    if [[ -d "/dev/shm" ]]
+    then
+      local shm_count=$(find /dev/shm -maxdepth 1 -type f -name 'fhtagn.*' | wc -l)
+      (( cnt += shm_count ))
+    fi
+    echo $cnt
+  }
+
   test_file() {
     if [[ $TOOL == "tush" ]]
     then
       export PATH="$PATH:$MYDIR/soft/tush/bin"
       DIFF="diff --strip-trailing-cr" tush-check "$f"
     else
+      local before_count=$(calc_temp_files)
       ./fhtagn.awk "$f"
+      local after_count=$(calc_temp_files)
+      if (( before_count != after_count ))
+      then
+        echo >&2 "!!! temp file not deleted !!!"
+        exit 1
+      fi
     fi
   }
 
