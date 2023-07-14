@@ -2,7 +2,7 @@
 @options timing
 
 @define TUSH_REPO='https://github.com/adolfopa/tush'
-@define GOAWK_VERSION='1.23.1'
+@define GOAWK_VERSION='1.24.0'
 @define GOAWK="goawk$GOAWK_VERSION"
 
 @goal soft_folder_created @private
@@ -45,7 +45,7 @@
 @depends_on tested_by @args 'tush'   'mawk -f ./fhtagn.awk'
 @depends_on tested_by @args 'fhtagn' 'mawk -f ./fhtagn.awk'
 @depends_on tested_by_busybox_awk
-#@depends_on tested_by_goawk
+@depends_on tested_by_goawk
 
 @goal tested_by_bwk
 @depends_on installed_bwk
@@ -67,8 +67,8 @@
 
 @goal tested_by_goawk
 @depends_on installed_goawk
-@depends_on tested_by @args 'tush'   './soft/goawk1.23.1 -f ./fhtagn.awk'
-@depends_on tested_by @args 'fhtagn' './soft/goawk1.23.1 -f ./fhtagn.awk'
+@depends_on tested_by @args 'tush'   './soft/goawk1.24.0 -f ./fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' './soft/goawk1.24.0 -f ./fhtagn.awk'
 
 @goal tested_by @params TOOL FHTAGN
 @depends_on tush_installed
