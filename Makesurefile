@@ -1,9 +1,9 @@
 # vim: syntax=bash
 @options timing
 
-@define TUSH_REPO='https://github.com/adolfopa/tush'
-@define GOAWK_VERSION='1.24.0'
-@define GOAWK="goawk$GOAWK_VERSION"
+@define TUSH_REPO     'https://github.com/adolfopa/tush'
+@define GOAWK_VERSION '1.24.0'
+@define GOAWK         "./soft/goawk$GOAWK_VERSION"
 
 @goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
@@ -67,8 +67,8 @@
 
 @goal tested_by_goawk
 @depends_on installed_goawk
-@depends_on tested_by @args 'tush'   './soft/goawk1.24.0 -f ./fhtagn.awk'
-@depends_on tested_by @args 'fhtagn' './soft/goawk1.24.0 -f ./fhtagn.awk'
+@depends_on tested_by @args 'tush'   "$GOAWK -f ./fhtagn.awk"
+@depends_on tested_by @args 'fhtagn' "$GOAWK -f ./fhtagn.awk"
 
 @goal tested_by @params TOOL FHTAGN
 @depends_on tush_installed
@@ -148,7 +148,7 @@
   echo "Installed: $(./soft/busybox | head -n 1)"
 
 @goal installed_goawk @private
-@reached_if [[ -f soft/$GOAWK ]]
+@reached_if [[ -f $GOAWK ]]
 @depends_on soft_folder_created
   echo
   echo "Fetching GoAWK $GOAWK_VERSION ..."
@@ -170,8 +170,8 @@
   tar xzvf "$F" goawk
   rm "$F"
 
-  mv goawk $GOAWK
-  "./$GOAWK" --version
+  mv goawk "goawk$GOAWK_VERSION"
+  "./goawk$GOAWK_VERSION" --version
 
 @goal update_readme
 @doc 'updates the README.md with the current output of the tool'
@@ -186,14 +186,14 @@
   mv README.md.1 README.md
 
 
-@define COVERPROFILE="/tmp/cov_fhtagn.txt"
+@define COVERPROFILE "/tmp/cov_fhtagn.txt"
 
 @goal _cover_profile_deleted @private
   rm -f "$COVERPROFILE"
 
 @goal _cover_profile_prepared @private
 @depends_on _cover_profile_deleted
-@depends_on tested_by @args 'fhtagn' './soft/goawk1.24.0 -covermode=set -coverprofile=/tmp/cov_fhtagn.txt -coverappend -f ./fhtagn.awk'
+@depends_on tested_by @args 'fhtagn' "$GOAWK -covermode=set -coverprofile=$COVERPROFILE -coverappend -f ./fhtagn.awk"
 
 @goal coverage
 @doc 'prepares code coverage report'
