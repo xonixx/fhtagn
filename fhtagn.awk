@@ -3,7 +3,7 @@ BEGIN {
   Prog = "fhtagn"
   if (!(Diff = ENVIRON["DIFF"])) Diff = "diff"
   if (!(Tmp = ENVIRON["TMPDIR"])) Tmp = "/tmp"
-  if (!(Rnd = ENVIRON["RANDOM"])) initRnd() # additional source of "random"
+  initRnd() # additional source of "random"
   All = ENVIRON["ALL"]
   srand()
   Success = Failed = 0
@@ -11,7 +11,7 @@ BEGIN {
 }
 END { if (ToDel) system("rm -f" ToDel) }
 function initRnd(   c) {
-  (c = "echo $$") | getline Rnd # using PID serves good approximation to random
+  (c = "echo $$") | getline Rnd # using PID serves a good approximation to random
   close(c)
 }
 function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,testStarted,expected,hasMoreCode) {
