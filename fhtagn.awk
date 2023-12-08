@@ -1,18 +1,17 @@
 #!/usr/bin/awk -f
 BEGIN {
   Prog = "fhtagn"
-  initTmpRnd()
   if (!(Diff = ENVIRON["DIFF"])) Diff = "diff"
+  if (!(Tmp = ENVIRON["TMPDIR"])) Tmp = "/tmp"
+  if (!(Rnd = ENVIRON["RANDOM"])) initRnd() # additional source of "random"
   All = ENVIRON["ALL"]
   srand()
   Success = Failed = 0
   fhtagn()
 }
 END { if (ToDel) system("rm -f" ToDel) }
-function initTmpRnd(   c) {
-  c = "[ -d /dev/shm ] && echo /dev/shm || echo /tmp ; echo $$"
-  c | getline Tmp
-  c | getline Rnd # additional source of "random"
+function initRnd(   c) {
+  (c = "echo $$") | getline Rnd # using PID serves good approximation to random
   close(c)
 }
 function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,testStarted,expected,hasMoreCode) {
