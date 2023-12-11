@@ -9,24 +9,34 @@
 @reached_if [[ -d "soft" ]]
   mkdir soft
 
+@lib dl
+  download() {
+    local url="$1"
+    local file="$2"
+
+    if command -v wget >/dev/null
+    then
+      wget "$url" -O"$file"
+    elif command -v curl >/dev/null
+    then
+      curl -L "$url" -o "$file"
+    else
+      false
+    fi
+  }
+
 @goal tush_installed @private
 @depends_on soft_folder_created
 @reached_if [[ -f "soft/tush/bin/tush-check" ]]
+@use_lib dl
   echo
   echo "Fetching tush..."
   echo
 
   cd "soft"
 
-  if command -v wget >/dev/null
+  if download "$TUSH_REPO/archive/master.tar.gz" ./tush.tar.gz
   then
-    wget $TUSH_REPO/archive/master.tar.gz -O./tush.tar.gz
-    tar xzvf ./tush.tar.gz
-    rm ./tush.tar.gz
-    mv tush-master tush
-  elif command -v curl >/dev/null
-  then
-    curl -L $TUSH_REPO/archive/master.tar.gz -o ./tush.tar.gz
     tar xzvf ./tush.tar.gz
     rm ./tush.tar.gz
     mv tush-master tush
@@ -36,9 +46,11 @@
   fi
 
 @goal default
+@doc 'same as tested'
 @depends_on tested
 
 @goal tested
+@doc 'runs test suite'
 @depends_on tested_by_default_awk
 @depends_on tested_by_bwk
 @depends_on tested_by_gawk
@@ -117,13 +129,14 @@
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
 @depends_on soft_folder_created
+@use_lib dl
   echo
   echo "Fetching BWK..."
   echo
 
   cd "soft"
 
-  wget https://github.com/onetrueawk/awk/archive/refs/heads/master.tar.gz -Obwk.tar.gz
+  download 'https://github.com/onetrueawk/awk/archive/refs/heads/master.tar.gz' bwk.tar.gz
   tar xzvf bwk.tar.gz
   rm bwk.tar.gz
 
@@ -143,13 +156,15 @@
 
 @goal installed_busybox @private
 @reached_if [[ -x ./soft/busybox ]]
-  wget 'https://busybox.net/downloads/binaries/1.31.0-i686-uclibc/busybox' -O ./soft/busybox
+@use_lib dl
+  download 'https://busybox.net/downloads/binaries/1.31.0-i686-uclibc/busybox' ./soft/busybox
   chmod +x ./soft/busybox
   echo "Installed: $(./soft/busybox | head -n 1)"
 
 @goal installed_goawk @private
 @reached_if [[ -f $GOAWK ]]
 @depends_on soft_folder_created
+@use_lib dl
   echo
   echo "Fetching GoAWK $GOAWK_VERSION ..."
   echo
@@ -166,7 +181,7 @@
   fi
 
   F=goawk_v${GOAWK_VERSION}_${os}_amd64.tar.gz
-  wget "https://github.com/benhoyt/goawk/releases/download/v$GOAWK_VERSION/$F"
+  download "https://github.com/benhoyt/goawk/releases/download/v$GOAWK_VERSION/$F" "$F"
   tar xzvf "$F" goawk
   rm "$F"
 
