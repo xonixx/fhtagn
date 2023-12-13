@@ -46,10 +46,10 @@
   fi
 
 @goal default
-@doc 'same as tested'
-@depends_on tested
+@doc 'same as tested_by_default_awk'
+@depends_on tested_by_default_awk
 
-@goal tested
+@goal testall
 @doc 'runs test suite'
 @depends_on tested_by_default_awk
 @depends_on tested_by_bwk

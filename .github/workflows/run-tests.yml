@@ -17,11 +17,11 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}-soft--all-2
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}-soft--all-3
 
       - name: "run tests"
         run: |
-          ./makesure
+          ./makesure testall
 
   macos:
     name: "macOS"
@@ -36,11 +36,11 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-soft--macos
+          key: ${{ matrix.os }}-soft--macos-1
 
       - name: "run tests"
         run: |
-          ./makesure tested_by_default_awk
+          ./makesure
 
   win:
     name: "Win"
@@ -55,8 +55,8 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-soft--win
+          key: ${{ matrix.os }}-soft--win-1
 
       - name: "run tests"
         run: |
-          & bash -e -c "./makesure tested_by_default_awk"
+          & bash -e -c "./makesure"
