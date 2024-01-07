@@ -1,6 +1,7 @@
 # vim: syntax=bash
 @options timing
 
+@define NEXT_VERSION  '0.1.1'
 @define TUSH_REPO     'https://github.com/adolfopa/tush'
 @define GOAWK_VERSION '1.24.0'
 @define GOAWK         "./soft/goawk$GOAWK_VERSION"
@@ -224,3 +225,33 @@
   echo "coverage: $coverage"
   awk -v coverage="$coverage" '{ gsub(/\$COVERAGE/,coverage) } 1' coverage.tpl.svg > coverage.svg
   rm "$html"
+
+@goal release_prepated
+@doc 'prepares coverage badge & README'
+@depends_on coverage_badge_updated
+@depends_on update_readme
+
+@goal gh_release
+@doc 'publish Github release (draft)'
+
+  fail () {
+    echo >&2 "$@"
+    exit 1
+  }
+
+  releaseTag="v$NEXT_VERSION"
+  echo
+  echo "Will publish a draft release for $releaseTag ..."
+  echo
+
+  notesStr="[Issues included](https://github.com/xonixx/fhtagn/issues?q=is%3Aclosed+milestone%3A${NEXT_VERSION})"
+
+  echo "Notes: $notesStr"
+
+  gh release create "$releaseTag" \
+    --title "$releaseTag" \
+    --notes "$notesStr" \
+    --draft
+
+  echo "Please don't forget to open the release draft, edit it as needed and PUBLISH!"
+

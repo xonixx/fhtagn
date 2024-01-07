@@ -40,7 +40,7 @@ This will stop on the first error found.
 Example:
 ```
 $ ./fhtagn.awk tests/1.tush tests/2.tush tests/3.tush 
-tests/2.tush:10: $ echo "hello world"; echo "error msg" >&2; exit 7
+tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 --- expected
 +++ actual
 @@ -1,4 +1,4 @@
@@ -66,7 +66,7 @@ Useful for running in CI.
 Example:
 ```
 $ ALL=1 ./fhtagn.awk tests/1.tush tests/2.tush tests/3.tush 
-tests/2.tush:10: $ echo "hello world"; echo "error msg" >&2; exit 7
+tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 --- expected
 +++ actual
 @@ -1,4 +1,4 @@
@@ -76,7 +76,7 @@ tests/2.tush:10: $ echo "hello world"; echo "error msg" >&2; exit 7
 +@ error msg
 +? 7
  
-tests/3.tush:4: $ echo bbb
+tests/3.tush:7: $ echo bbb
 --- expected
 +++ actual
 @@ -1,2 +1,2 @@
