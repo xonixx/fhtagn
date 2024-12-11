@@ -1,9 +1,9 @@
 # vim: syntax=bash
 @options timing
 
-@define NEXT_VERSION  '0.1.1'
+@define NEXT_VERSION  '0.2.0'
 @define TUSH_REPO     'https://github.com/adolfopa/tush'
-@define GOAWK_VERSION '1.24.0'
+@define GOAWK_VERSION '1.29.1' # https://github.com/benhoyt/goawk/releases
 @define GOAWK         "./soft/goawk$GOAWK_VERSION"
 
 @goal soft_folder_created @private
