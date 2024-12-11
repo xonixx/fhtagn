@@ -48,7 +48,10 @@ function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,tes
       checkTestResult(file,code,line,expected,stdOutF,stdErrF,exitCode,random)
     }
   }
-  if (All) printf "result=%s, failure=%d, success=%d, total=%d, files=%d\n", Failed ? "FAIL" : "SUCCESS", Failed, Success, Failed + Success, i - 1
+  if (All) {
+    printf "result=%s, failure=%d, success=%d, total=%d, files=%d\n", Failed ? "FAIL" : "SUCCESS", Failed, Success, Failed + Success, i - 1
+    if (Failed) exit 1
+  }
 }
 function die(err) { print err > "/dev/stderr"; exit 2 }
 function checkTestResult(file, code, line, expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,d) {
