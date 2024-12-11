@@ -50,7 +50,7 @@ function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,tes
   }
   if (All) {
     printf "result=%s, failure=%d, success=%d, total=%d, files=%d\n", Failed ? "FAIL" : "SUCCESS", Failed, Success, Failed + Success, i - 1
-    if (Failed) exit 1
+    exit !!Failed
   }
 }
 function die(err) { print err > "/dev/stderr"; exit 2 }
