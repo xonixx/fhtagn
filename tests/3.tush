@@ -6,3 +6,9 @@ $ echo aaa
 | aaa
 $ echo bbb
 | BBB
+
+testing line with a comment
+===========================
+
+$ echo aaa # comment
+| aaa

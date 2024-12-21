@@ -77,7 +77,7 @@ function prefixFile(prefix, fname,   l,res,err) {
   return res
 }
 function run(code,stdOutF,stdErrF) {
-  return system("(" code ") 1>" stdOutF " 2>" stdErrF) # can it be that {} are better than ()?
+  return system("{" code "\n} 1>" stdOutF " 2>" stdErrF)
 }
 function rndS() { return int(2147483647 * rand()) "." Rnd }
 function tmpFile(random, ext) { return sprintf("%s/%s.%s.%s", Tmp, Prog, random, ext) }
