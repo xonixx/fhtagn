@@ -85,10 +85,10 @@
 
 @goal tested_by @params TOOL FHTAGN
 @depends_on tush_installed
+  export MYDIR="$(pwd)"
   f=tests/fhtagn.tush
 
   echo "Testing with $TOOL ($FHTAGN)..."
-  export FHTAGN
 
   calc_temp_files() {
     local tmp_count=$(find /tmp -maxdepth 1 -type f -name 'fhtagn.*' | wc -l)
