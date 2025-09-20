@@ -1,3 +1,5 @@
+# https://github.com/actions/runner-images
+
 on:
   - "push"
 
@@ -9,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-20.04, ubuntu-22.04, ubuntu-24.04 ]
+        os: [ ubuntu-22.04, ubuntu-24.04 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -17,7 +19,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}-soft--all-3
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}
 
       - name: "run tests"
         run: |
@@ -36,7 +38,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-soft--macos-1
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}
 
       - name: "run tests"
         run: |
@@ -47,7 +49,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019, windows-2022 ]
+        os: [ windows-2022, windows-2025 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -55,7 +57,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-soft--win-1
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}
 
       - name: "run tests"
         run: |
