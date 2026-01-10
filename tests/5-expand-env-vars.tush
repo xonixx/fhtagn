@@ -1,0 +1,12 @@
+
+make sure we show env vars on error
+===================================
+
+$ echo $FOO "$BAR" ${BAZ}
+| xxx
+
+should not expand
+=================
+
+$ echo '$LITERAL'
+| $LITERAL
