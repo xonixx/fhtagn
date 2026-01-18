@@ -4,9 +4,6 @@ vars can go before or after, this is consistent with make
 
 $ ./fhtagn.awk FOO=foo BAR=bar tests/5-expand-vars/case1-success.tush BAZ=baz
 
-TODO: what if we omit a var?
-============================
-
 $ ./tests/trimBlank.sh ./fhtagn.awk FOO=foo BAR=bar tests/5-expand-vars/case2-error.tush BAZ=baz
 | tests/5-expand-vars/case2-error.tush:5: $ echo foo "bar" 'baz'
 | --- expected
@@ -22,8 +19,12 @@ $ ./tests/trimBlank.sh ./fhtagn.awk FOO=foo BAR=bar tests/5-expand-vars/case2-er
 
 $ ./fhtagn.awk tests/5-expand-vars/case3-literal.tush FOO=foo
 
-
 no variable provided = no substitution
 ======================================
 
 $ ./fhtagn.awk tests/5-expand-vars/case4-literal.tush
+
+omit a var - only provided vars substitute
+==========================================
+
+$ ./fhtagn.awk FOO=foo BAR=bar tests/5-expand-vars/case5-partial.tush
