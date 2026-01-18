@@ -1,2 +1,12 @@
 
+vars can go before or after, this is consistent with make
+=========================================================
 
+$ ./fhtagn.awk FOO=foo BAR=bar tests/5-expand-vars/case1-success.tush BAZ=baz
+
+TODO: what if we omit a var?
+============================
+
+$ ./fhtagn.awk tests/5-expand-vars/case2-error.tush
+
+$ ./fhtagn.awk tests/5-expand-vars/case3-literal.tush

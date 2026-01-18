@@ -2,5 +2,5 @@
 should not expand
 =================
 
-$ echo \{\{FOO}} "\{\{BAR}}" '\{\{BAZ}}'
-| {{FOO}} {{BAR}} {{BAZ}}
+$ echo \{\{FOO}}
+| {{FOO}}

@@ -83,6 +83,9 @@
 @depends_on tested_by @args 'tush'   "$GOAWK -f ./fhtagn.awk"
 @depends_on tested_by @args 'fhtagn' "$GOAWK -f ./fhtagn.awk"
 
+@goal test_expand_vars
+./fhtagn.awk tests/5-expand-vars/tests.tush
+
 @goal tested_by @params TOOL FHTAGN
 @depends_on tush_installed
   export MYDIR="$(pwd)"
