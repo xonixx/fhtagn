@@ -16,13 +16,9 @@ function initRnd(   c) {
   close(c)
 }
 function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,testStarted,expected,hasMoreCode,k) {
-  for (i = 1; i < ARGC; i++) {
-    if ((file = ARGV[i]) ~ /=/) { # TODO no need ~ can use k
-      k = index(file, "=") - 1
-      Vars[substr(file, 1, k)] = substr(file, k + 2)
-      #      print substr(file, 1, k = index(file, "=") - 1) "->" substr(file, k + 2)
-    }
-  }
+  for (i = 1; i < ARGC; i++)
+    if (k = index(l = ARGV[i], "="))
+      Vars[substr(l, 1, k - 1)] = substr(l, k + 1)
 
   for (i = 1; i < ARGC; i++) {
     if ((file = ARGV[i]) ~ /=/) continue
@@ -35,10 +31,8 @@ function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,tes
         # execute line starting '$', producing out & err & exit_code
         ToDel = ToDel " " (stdOutF = tmpFile(random = rndS(), "out")) " " (stdErrF = tmpFile(random, "err"))
         if ((code = substr(l, 2)) ~ /{{/)
-          for (k in Vars) {
-#            print k, Vars[k], code
+          for (k in Vars)
             gsub("{{"k"}}", Vars[k], code)
-          }
         line = nr
         if (!(hasMoreCode = l ~ /\\$/))
           exitCode = run(code, stdOutF, stdErrF)
