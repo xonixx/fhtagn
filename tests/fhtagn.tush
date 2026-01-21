@@ -73,5 +73,3 @@ $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/4-multiline.tush
 | +| 222
 | ---blank---
 ? 1
-
-$ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/5-expand-env-vars.tush

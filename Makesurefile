@@ -72,6 +72,7 @@
 @goal tested_by_default_awk
 @depends_on tested_by @args 'tush'   './fhtagn.awk'
 @depends_on tested_by @args 'fhtagn' './fhtagn.awk'
+@depends_on test_expand_vars
 
 @goal tested_by_busybox_awk
 @depends_on installed_busybox
