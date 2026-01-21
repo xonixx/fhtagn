@@ -61,7 +61,6 @@
 ./fhtagn.awk tests/5-expand-vars/tests.tush
 
 @goal tested_by @params FHTAGN
-  export MYDIR="$(pwd)"
   f=tests/fhtagn.tush
 
   echo "Testing with ($FHTAGN)..."
@@ -80,7 +79,7 @@
 
   test_file() {
     local before_count=$(calc_temp_files)
-    if ! ./fhtagn.awk "$f"
+    if ! ./fhtagn.awk "$f" FHTAGN="$FHTAGN"
     then
       return 1
     fi

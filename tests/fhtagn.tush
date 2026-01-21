@@ -1,11 +1,11 @@
 
-$ cd "$MYDIR"; $FHTAGN -- absent
+$ {{FHTAGN}} -- absent
 @ error reading file: absent
 ? 2
 
-$ cd "$MYDIR"; $FHTAGN -- tests/1.tush
+$ {{FHTAGN}} -- tests/1.tush
 
-$ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/2.tush
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/2.tush
 | tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 | --- expected
 | +++ actual
@@ -18,7 +18,7 @@ $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/2.tush
 | ---blank---
 ? 1
 
-$ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/3.tush
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/3.tush
 | tests/3.tush:7: $ echo bbb
 | --- expected
 | +++ actual
@@ -28,7 +28,7 @@ $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/3.tush
 | ---blank---
 ? 1
 
-$ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/3.tush
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/1.tush tests/3.tush
 | tests/3.tush:7: $ echo bbb
 | --- expected
 | +++ actual
@@ -38,7 +38,7 @@ $ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/3.tush
 | ---blank---
 ? 1
 
-$ cd "$MYDIR"; ALL=1 ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/2.tush tests/3.tush
+$ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.tush tests/2.tush tests/3.tush
 | tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 | --- expected
 | +++ actual
@@ -59,10 +59,10 @@ $ cd "$MYDIR"; ALL=1 ./tests/trimBlank.sh $FHTAGN tests/1.tush tests/2.tush test
 | result=FAIL, failure=2, success=5, total=7, files=3
 ? 1
 
-$ cd "$MYDIR"; ALL=1 ./tests/trimBlank.sh $FHTAGN tests/1.tush
+$ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.tush
 | result=SUCCESS, failure=0, success=2, total=2, files=1
 
-$ cd "$MYDIR"; ./tests/trimBlank.sh $FHTAGN tests/4-multiline.tush
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/4-multiline.tush
 | tests/4-multiline.tush:25: $ echo 111; \
 |   echo 222
 | --- expected
