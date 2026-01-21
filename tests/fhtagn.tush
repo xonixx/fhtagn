@@ -73,3 +73,36 @@ $ ./tests/trimBlank.sh {{FHTAGN}} tests/4-multiline.tush
 | +| 222
 | ---blank---
 ? 1
+
+EXPAND VARS TESTS
+=================
+
+vars can go before or after, this is consistent with make
+=========================================================
+
+$ {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case1-success.tush BAZ=baz
+
+$ ./tests/trimBlank.sh {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case2-error.tush BAZ=baz
+| tests/5-expand-vars/case2-error.tush:5: $ echo foo "bar" 'baz'
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -| xxx
+| +| foo bar baz
+| ---blank---
+? 1
+
+\{\{ = no substitution
+======================
+
+$ {{FHTAGN}} tests/5-expand-vars/case3-literal.tush FOO=foo
+
+no variable provided = no substitution
+======================================
+
+$ {{FHTAGN}} tests/5-expand-vars/case4-literal.tush
+
+omit a var - only provided vars substitute
+==========================================
+
+$ {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case5-partial.tush

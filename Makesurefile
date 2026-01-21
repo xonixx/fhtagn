@@ -47,7 +47,6 @@
 
 @goal tested_by_default_awk
 @depends_on tested_by @args './fhtagn.awk'
-@depends_on test_expand_vars
 
 @goal tested_by_busybox_awk
 @depends_on installed_busybox
@@ -57,14 +56,7 @@
 @depends_on installed_goawk
 @depends_on tested_by @args "$GOAWK -f ./fhtagn.awk"
 
-@goal test_expand_vars
-./fhtagn.awk tests/5-expand-vars/tests.tush
-
 @goal tested_by @params FHTAGN
-  f=tests/fhtagn.tush
-
-  echo "Testing with ($FHTAGN)..."
-
   calc_temp_files() {
     local tmp_count=$(find /tmp -maxdepth 1 -type f -name 'fhtagn.*' | wc -l)
     local cnt
@@ -79,7 +71,7 @@
 
   test_file() {
     local before_count=$(calc_temp_files)
-    if ! ./fhtagn.awk "$f" FHTAGN="$FHTAGN"
+    if ! ./fhtagn.awk 'tests/fhtagn.tush' FHTAGN="$FHTAGN"
     then
       return 1
     fi
@@ -93,9 +85,9 @@
 
   if test_file
   then
-    echo "TESTS PASSED : $f"
+    echo "TESTS PASSED : $FHTAGN"
   else
-    echo >&2 "!!! TESTS FAILED !!! : $f"
+    echo >&2 "!!! TESTS FAILED !!! : $FHTAGN"
     exit 1
   fi
 
