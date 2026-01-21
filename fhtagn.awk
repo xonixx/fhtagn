@@ -30,7 +30,7 @@ function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,tes
         expected = ""
         # execute line starting '$', producing out & err & exit_code
         ToDel = ToDel " " (stdOutF = tmpFile(random = rndS(), "out")) " " (stdErrF = tmpFile(random, "err"))
-        if ((code = substr(l, 2)) ~ /{{/)
+        if (index(code = substr(l, 2),"{{"))
           for (k in Vars)
             gsub("{{"k"}}", Vars[k], code)
         line = nr
