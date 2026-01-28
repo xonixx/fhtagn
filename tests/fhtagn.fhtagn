@@ -3,10 +3,10 @@ $ {{FHTAGN}} -- absent
 @ error reading file: absent
 ? 2
 
-$ {{FHTAGN}} -- tests/1.tush
+$ {{FHTAGN}} -- tests/1.fhtagn
 
-$ ./tests/trimBlank.sh {{FHTAGN}} tests/2.tush
-| tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/2.fhtagn
+| tests/2.fhtagn:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 | --- expected
 | +++ actual
 | @@ -1,4 +1,4 @@
@@ -18,8 +18,8 @@ $ ./tests/trimBlank.sh {{FHTAGN}} tests/2.tush
 | ---blank---
 ? 1
 
-$ ./tests/trimBlank.sh {{FHTAGN}} tests/3.tush
-| tests/3.tush:7: $ echo bbb
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/3.fhtagn
+| tests/3.fhtagn:7: $ echo bbb
 | --- expected
 | +++ actual
 | @@ -1,2 +1,2 @@
@@ -28,8 +28,8 @@ $ ./tests/trimBlank.sh {{FHTAGN}} tests/3.tush
 | ---blank---
 ? 1
 
-$ ./tests/trimBlank.sh {{FHTAGN}} tests/1.tush tests/3.tush
-| tests/3.tush:7: $ echo bbb
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/1.fhtagn tests/3.fhtagn
+| tests/3.fhtagn:7: $ echo bbb
 | --- expected
 | +++ actual
 | @@ -1,2 +1,2 @@
@@ -38,8 +38,8 @@ $ ./tests/trimBlank.sh {{FHTAGN}} tests/1.tush tests/3.tush
 | ---blank---
 ? 1
 
-$ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.tush tests/2.tush tests/3.tush
-| tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
+$ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.fhtagn tests/2.fhtagn tests/3.fhtagn
+| tests/2.fhtagn:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 | --- expected
 | +++ actual
 | @@ -1,4 +1,4 @@
@@ -49,7 +49,7 @@ $ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.tush tests/2.tush tests/3.tush
 | +@ error msg
 | +? 7
 | ---blank---
-| tests/3.tush:7: $ echo bbb
+| tests/3.fhtagn:7: $ echo bbb
 | --- expected
 | +++ actual
 | @@ -1,2 +1,2 @@
@@ -59,11 +59,11 @@ $ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.tush tests/2.tush tests/3.tush
 | result=FAIL, failure=2, success=5, total=7, files=3
 ? 1
 
-$ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.tush
+$ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.fhtagn
 | result=SUCCESS, failure=0, success=2, total=2, files=1
 
-$ ./tests/trimBlank.sh {{FHTAGN}} tests/4-multiline.tush
-| tests/4-multiline.tush:25: $ echo 111; \
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/4-multiline.fhtagn
+| tests/4-multiline.fhtagn:25: $ echo 111; \
 |   echo 222
 | --- expected
 | +++ actual
@@ -80,10 +80,10 @@ EXPAND VARS TESTS
 vars can go before or after, this is consistent with make
 =========================================================
 
-$ {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case1-success.tush BAZ=baz
+$ {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case1-success.fhtagn BAZ=baz
 
-$ ./tests/trimBlank.sh {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case2-error.tush BAZ=baz
-| tests/5-expand-vars/case2-error.tush:5: $ echo foo "bar" 'baz'
+$ ./tests/trimBlank.sh {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case2-error.fhtagn BAZ=baz
+| tests/5-expand-vars/case2-error.fhtagn:5: $ echo foo "bar" 'baz'
 | --- expected
 | +++ actual
 | @@ -1,2 +1,2 @@
@@ -95,14 +95,14 @@ $ ./tests/trimBlank.sh {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case2-erro
 \{\{ = no substitution
 ======================
 
-$ {{FHTAGN}} tests/5-expand-vars/case3-literal.tush FOO=foo
+$ {{FHTAGN}} tests/5-expand-vars/case3-literal.fhtagn FOO=foo
 
 no variable provided = no substitution
 ======================================
 
-$ {{FHTAGN}} tests/5-expand-vars/case4-literal.tush
+$ {{FHTAGN}} tests/5-expand-vars/case4-literal.fhtagn
 
 omit a var - only provided vars substitute
 ==========================================
 
-$ {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case5-partial.tush
+$ {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case5-partial.fhtagn

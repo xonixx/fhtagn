@@ -71,7 +71,7 @@
 
   test_file() {
     local before_count=$(calc_temp_files)
-    if ! ./fhtagn.awk 'tests/fhtagn.tush' FHTAGN="$FHTAGN"
+    if ! ./fhtagn.awk 'tests/fhtagn.fhtagn' FHTAGN="$FHTAGN"
     then
       return 1
     fi
