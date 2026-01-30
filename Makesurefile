@@ -1,8 +1,8 @@
 # vim: syntax=bash
 @options timing
 
-@define NEXT_VERSION  '0.2.1'
-@define GOAWK_VERSION '1.29.1' # https://github.com/benhoyt/goawk/releases
+@define NEXT_VERSION  '0.3.0'
+@define GOAWK_VERSION '1.31.0' # https://github.com/benhoyt/goawk/releases
 @define GOAWK         "./soft/goawk$GOAWK_VERSION"
 
 @goal soft_folder_created @private
@@ -172,6 +172,7 @@
   rm -f "$COVERPROFILE"
 
 @goal _cover_profile_prepared @private
+@depends_on installed_goawk
 @depends_on _cover_profile_deleted
 @depends_on tested_by @args "$GOAWK -covermode=set -coverprofile=$COVERPROFILE -coverappend -f ./fhtagn.awk"
 
