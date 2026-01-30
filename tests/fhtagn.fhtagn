@@ -1,0 +1,108 @@
+
+$ {{FHTAGN}} -- absent
+@ error reading file: absent
+? 2
+
+$ {{FHTAGN}} -- tests/1.fhtagn
+
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/2.fhtagn
+| tests/2.fhtagn:12: $ echo "hello world"; echo "error msg" >&2; exit 7
+| --- expected
+| +++ actual
+| @@ -1,4 +1,4 @@
+|  | hello world
+| -@ error msg 444
+| -? 8
+| +@ error msg
+| +? 7
+| ---blank---
+? 1
+
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/3.fhtagn
+| tests/3.fhtagn:7: $ echo bbb
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -| BBB
+| +| bbb
+| ---blank---
+? 1
+
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/1.fhtagn tests/3.fhtagn
+| tests/3.fhtagn:7: $ echo bbb
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -| BBB
+| +| bbb
+| ---blank---
+? 1
+
+$ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.fhtagn tests/2.fhtagn tests/3.fhtagn
+| tests/2.fhtagn:12: $ echo "hello world"; echo "error msg" >&2; exit 7
+| --- expected
+| +++ actual
+| @@ -1,4 +1,4 @@
+|  | hello world
+| -@ error msg 444
+| -? 8
+| +@ error msg
+| +? 7
+| ---blank---
+| tests/3.fhtagn:7: $ echo bbb
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -| BBB
+| +| bbb
+| ---blank---
+| result=FAIL, failure=2, success=5, total=7, files=3
+? 1
+
+$ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/1.fhtagn
+| result=SUCCESS, failure=0, success=2, total=2, files=1
+
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/4-multiline.fhtagn
+| tests/4-multiline.fhtagn:25: $ echo 111; \
+|   echo 222
+| --- expected
+| +++ actual
+| @@ -1,3 +1,3 @@
+|  | 111
+| -| 777
+| +| 222
+| ---blank---
+? 1
+
+EXPAND VARS TESTS
+=================
+
+vars can go before or after, this is consistent with make
+=========================================================
+
+$ {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case1-success.fhtagn BAZ=baz
+
+$ ./tests/trimBlank.sh {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case2-error.fhtagn BAZ=baz
+| tests/5-expand-vars/case2-error.fhtagn:5: $ echo foo "bar" 'baz'
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -| xxx
+| +| foo bar baz
+| ---blank---
+? 1
+
+\{\{ = no substitution
+======================
+
+$ {{FHTAGN}} tests/5-expand-vars/case3-literal.fhtagn FOO=foo
+
+no variable provided = no substitution
+======================================
+
+$ {{FHTAGN}} tests/5-expand-vars/case4-literal.fhtagn
+
+omit a var - only provided vars substitute
+==========================================
+
+$ {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case5-partial.fhtagn

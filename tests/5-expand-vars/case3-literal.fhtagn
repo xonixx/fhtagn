@@ -1,0 +1,6 @@
+
+should not expand
+=================
+
+$ echo \{\{FOO}}
+| {{FOO}}

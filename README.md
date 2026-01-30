@@ -7,7 +7,7 @@
                     
 `fhtagn.awk` is a tiny CLI tool for literate testing for command-line programs.  
                    
-File `tests.tush`:
+File `tests.fhtagn`:
 ```
 $ command --that --should --execute correctly
 | expected stdout output
@@ -18,11 +18,11 @@ $ command --that --will --cause error
 ```
 
 Run the tests:
-```shell
-./fhtagn.awk tests.tush
+```sh
+./fhtagn.awk tests.fhtagn
 ```
 
-In fact this is a re-implementation of [darius/tush](https://github.com/darius/tush), [adolfopa/tush](https://github.com/adolfopa/tush).
+In fact, this is a re-implementation of [darius/tush](https://github.com/darius/tush), [adolfopa/tush](https://github.com/adolfopa/tush).
 But simpler (single tiny AWK script) and faster, because:
                       
 - it uses `/dev/shm` where available instead of `/tmp`
@@ -32,15 +32,15 @@ But simpler (single tiny AWK script) and faster, because:
 
 ## Usage
 
-```
-./fhtagn.awk f1.tush [ f2.tush [ f3.tush [...] ] ]
+```sh
+./fhtagn.awk f1.fhtagn [ f2.fhtagn [ f3.fhtagn [...] ] ]
 ```
 This will stop on the first error found.
 
 Example:
 ```
-$ ./fhtagn.awk tests/1.tush tests/2.tush tests/3.tush 
-tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
+$ ./fhtagn.awk tests/1.fhtagn tests/2.fhtagn tests/3.fhtagn 
+tests/2.fhtagn:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 --- expected
 +++ actual
 @@ -1,4 +1,4 @@
@@ -57,16 +57,16 @@ tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 Set `ALL=1` environment variable.
 
 This runs all tests, collects all errors, and shows the stats at the end.
-```
-ALL=1 ./fhtagn.awk f1.tush [ f2.tush [ f3.tush [...] ] ]
+```sh
+ALL=1 ./fhtagn.awk f1.fhtagn [ f2.fhtagn [ f3.fhtagn [...] ] ]
 ```
 
 Useful for running in CI.
 
 Example:
 ```
-$ ALL=1 ./fhtagn.awk tests/1.tush tests/2.tush tests/3.tush 
-tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
+$ ALL=1 ./fhtagn.awk tests/1.fhtagn tests/2.fhtagn tests/3.fhtagn 
+tests/2.fhtagn:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 --- expected
 +++ actual
 @@ -1,4 +1,4 @@
@@ -76,7 +76,7 @@ tests/2.tush:12: $ echo "hello world"; echo "error msg" >&2; exit 7
 +@ error msg
 +? 7
  
-tests/3.tush:7: $ echo bbb
+tests/3.fhtagn:7: $ echo bbb
 --- expected
 +++ actual
 @@ -1,2 +1,2 @@
@@ -86,4 +86,24 @@ tests/3.tush:7: $ echo bbb
 result=FAIL, failure=2, success=4, total=6, files=3
 ```
 
+### Parameterized tests
+
+You can use variable substitution to parametrize tests. This works like so:
+
+```
+# in your .fhtagn file you have
+
+$ command {{VAR1}} '{{VAR2}}'
+| expected output
+```
+
+And you run it like so:
+
+```sh
+./fhtagn.awk tests.fhtagn VAR1=value VAR2='other value'
+```
+
+The example use case here is to check the correctness of the same command when ran by different versions of a programming language. This is what we do to test fhtagn itself with different AWKs: [link1](https://github.com/xonixx/fhtagn/blob/c3986e11757a05b8b3932b4eec204cbfdb31874b/tests/fhtagn.tush#L2), [link2](https://github.com/xonixx/fhtagn/blob/c3986e11757a05b8b3932b4eec204cbfdb31874b/Makesurefile#L74), [link3](https://github.com/xonixx/fhtagn/blob/c3986e11757a05b8b3932b4eec204cbfdb31874b/Makesurefile#L53).
+
+Note that in case of test failure, you will see an expanded command line, which is helpful for debugging.
 

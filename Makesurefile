@@ -2,7 +2,6 @@
 @options timing
 
 @define NEXT_VERSION  '0.2.1'
-@define TUSH_REPO     'https://github.com/adolfopa/tush'
 @define GOAWK_VERSION '1.29.1' # https://github.com/benhoyt/goawk/releases
 @define GOAWK         "./soft/goawk$GOAWK_VERSION"
 
@@ -26,26 +25,6 @@
     fi
   }
 
-@goal tush_installed @private
-@depends_on soft_folder_created
-@reached_if [[ -f "soft/tush/bin/tush-check" ]]
-@use_lib dl
-  echo
-  echo "Fetching tush..."
-  echo
-
-  cd "soft"
-
-  if download "$TUSH_REPO/archive/master.tar.gz" ./tush.tar.gz
-  then
-    tar xzvf ./tush.tar.gz
-    rm ./tush.tar.gz
-    mv tush-master tush
-  else
-    git clone --depth 1 $TUSH_REPO.git
-    rm -r tush/.git
-  fi
-
 @goal default
 @doc 'same as tested_by_default_awk'
 @depends_on tested_by_default_awk
@@ -55,41 +34,29 @@
 @depends_on tested_by_default_awk
 @depends_on tested_by_bwk
 @depends_on tested_by_gawk
-@depends_on tested_by @args 'tush'   'mawk -f ./fhtagn.awk'
-@depends_on tested_by @args 'fhtagn' 'mawk -f ./fhtagn.awk'
+@depends_on tested_by @args 'mawk -f ./fhtagn.awk'
 @depends_on tested_by_busybox_awk
 @depends_on tested_by_goawk
 
 @goal tested_by_bwk
 @depends_on installed_bwk
-@depends_on tested_by @args 'tush'   './soft/bwk -f ./fhtagn.awk'
-@depends_on tested_by @args 'fhtagn' './soft/bwk -f ./fhtagn.awk'
+@depends_on tested_by @args './soft/bwk -f ./fhtagn.awk'
 
 @goal tested_by_gawk
-@depends_on tested_by @args 'tush'   'gawk -f ./fhtagn.awk'
-@depends_on tested_by @args 'fhtagn' 'gawk -f ./fhtagn.awk'
+@depends_on tested_by @args 'gawk -f ./fhtagn.awk'
 
 @goal tested_by_default_awk
-@depends_on tested_by @args 'tush'   './fhtagn.awk'
-@depends_on tested_by @args 'fhtagn' './fhtagn.awk'
+@depends_on tested_by @args './fhtagn.awk'
 
 @goal tested_by_busybox_awk
 @depends_on installed_busybox
-@depends_on tested_by @args 'tush'   './soft/busybox awk -f ./fhtagn.awk'
-@depends_on tested_by @args 'fhtagn' './soft/busybox awk -f ./fhtagn.awk'
+@depends_on tested_by @args './soft/busybox awk -f ./fhtagn.awk'
 
 @goal tested_by_goawk
 @depends_on installed_goawk
-@depends_on tested_by @args 'tush'   "$GOAWK -f ./fhtagn.awk"
-@depends_on tested_by @args 'fhtagn' "$GOAWK -f ./fhtagn.awk"
+@depends_on tested_by @args "$GOAWK -f ./fhtagn.awk"
 
-@goal tested_by @params TOOL FHTAGN
-@depends_on tush_installed
-  export MYDIR="$(pwd)"
-  f=tests/fhtagn.tush
-
-  echo "Testing with $TOOL ($FHTAGN)..."
-
+@goal tested_by @params FHTAGN
   calc_temp_files() {
     local tmp_count=$(find /tmp -maxdepth 1 -type f -name 'fhtagn.*' | wc -l)
     local cnt
@@ -103,27 +70,24 @@
   }
 
   test_file() {
-    if [[ $TOOL == "tush" ]]
+    local before_count=$(calc_temp_files)
+    if ! ./fhtagn.awk 'tests/fhtagn.fhtagn' FHTAGN="$FHTAGN"
     then
-      export PATH="$PATH:$MYDIR/soft/tush/bin"
-      DIFF="diff --strip-trailing-cr" tush-check "$f"
-    else
-      local before_count=$(calc_temp_files)
-      ./fhtagn.awk "$f"
-      local after_count=$(calc_temp_files)
-      if (( before_count != after_count ))
-      then
-        echo >&2 "!!! temp file not deleted !!!"
-        exit 1
-      fi
+      return 1
+    fi
+    local after_count=$(calc_temp_files)
+    if (( before_count != after_count ))
+    then
+      echo >&2 "!!! temp file not deleted !!!"
+      return 1
     fi
   }
 
   if test_file
   then
-    echo "TESTS PASSED : $f"
+    echo "TESTS PASSED : $FHTAGN"
   else
-    echo >&2 "!!! TESTS FAILED !!! : $f"
+    echo >&2 "!!! TESTS FAILED !!! : $FHTAGN"
     exit 1
   fi
 
@@ -209,7 +173,7 @@
 
 @goal _cover_profile_prepared @private
 @depends_on _cover_profile_deleted
-@depends_on tested_by @args 'fhtagn' "$GOAWK -covermode=set -coverprofile=$COVERPROFILE -coverappend -f ./fhtagn.awk"
+@depends_on tested_by @args "$GOAWK -covermode=set -coverprofile=$COVERPROFILE -coverappend -f ./fhtagn.awk"
 
 @goal coverage
 @doc 'prepares code coverage report'

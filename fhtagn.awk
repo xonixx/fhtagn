@@ -4,6 +4,7 @@ BEGIN {
   if (!(Diff = ENVIRON["DIFF"])) Diff = "diff"
   if (!(Tmp = ENVIRON["TMPDIR"])) Tmp = "/tmp"
   initRnd() # additional source of "random"
+  delete Vars # name->value
   All = ENVIRON["ALL"]
   srand()
   Success = Failed = 0
@@ -14,38 +15,44 @@ function initRnd(   c) {
   (c = "echo $$") | getline Rnd # using PID serves a good approximation to random
   close(c)
 }
-function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,testStarted,expected,hasMoreCode) {
+function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,testStarted,expected,hasMoreCode,k) {
+  for (i = 1; i < ARGC; i++)
+    if (k = index(l = ARGV[i], "="))
+      Vars[substr(l, 1, k - 1)] = substr(l, k + 1)
+
   for (i = 1; i < ARGC; i++) {
-    file = ARGV[i]
+    if ((file = ARGV[i]) ~ /=/) continue
     for (nr = 1; (err = getline l < file) > 0; nr++) {
       if (l ~ /^\$/) {
         if (testStarted) # finish previous
-          checkTestResult(file,code,line,expected,stdOutF,stdErrF,exitCode,random)
+          checkTestResult(file, code, line, expected, stdOutF, stdErrF, exitCode, random)
         testStarted = 1
         expected = ""
         # execute line starting '$', producing out & err & exit_code
         ToDel = ToDel " " (stdOutF = tmpFile(random = rndS(), "out")) " " (stdErrF = tmpFile(random, "err"))
-        code = substr(l,2)
+        if (index(code = substr(l, 2),"{{"))
+          for (k in Vars)
+            gsub("{{"k"}}", Vars[k], code)
         line = nr
         if (!(hasMoreCode = l ~ /\\$/))
-          exitCode = run(code,stdOutF,stdErrF)
+          exitCode = run(code, stdOutF, stdErrF)
       } else if (hasMoreCode) {
         code = code "\n" l
         if (!(hasMoreCode = l ~ /\\$/))
-          exitCode = run(code,stdOutF,stdErrF)
+          exitCode = run(code, stdOutF, stdErrF)
       } else if (l ~ /^[|@?]/) {
         # parse result block (|@?)
         expected = expected l "\n"
       } else if (testStarted) {
         testStarted = 0
-        checkTestResult(file,code,line,expected,stdOutF,stdErrF,exitCode,random)
+        checkTestResult(file, code, line, expected, stdOutF, stdErrF, exitCode, random)
       }
     }
     if (err) die("error reading file: " file)
     close(file)
     if (testStarted) {
       testStarted = 0
-      checkTestResult(file,code,line,expected,stdOutF,stdErrF,exitCode,random)
+      checkTestResult(file, code, line, expected, stdOutF, stdErrF, exitCode, random)
     }
   }
   if (All) {
@@ -55,7 +62,7 @@ function fhtagn(   i,file,err,l,code,nr,line,random,exitCode,stdOutF,stdErrF,tes
 }
 function die(err) { print err > "/dev/stderr"; exit 2 }
 function checkTestResult(file, code, line, expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,d) {
-  actual = prefixFile("|",stdOutF) prefixFile("@",stdErrF)
+  actual = prefixFile("|", stdOutF) prefixFile("@", stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode "\n"
   if (expected != actual) {
     Failed++

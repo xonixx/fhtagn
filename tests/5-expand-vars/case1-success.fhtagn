@@ -1,0 +1,6 @@
+
+make sure we show env vars on error
+===================================
+
+$ echo {{FOO}} "{{BAR}}" '{{BAZ}}'
+| foo bar baz
