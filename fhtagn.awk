@@ -64,6 +64,7 @@ function die(err) { print err > "/dev/stderr"; exit 2 }
 function checkTestResult(file, code, line, expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,d) {
   actual = prefixFile("|", stdOutF) prefixFile("@", stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode "\n"
+  if (expected != actual) actual = normalizeActual(expected, actual)
   if (expected != actual) {
     Failed++
     #     printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
@@ -75,6 +76,18 @@ function checkTestResult(file, code, line, expected, stdOutF, stdErrF, exitCode,
     close(d)
     if (!All) exit 1
   } else Success++
+}
+function normalizeActual(expected, actual,   e,a,n,i,res) {
+  split(expected, e, "\n")
+  n = split(actual, a, "\n")
+  for (i = 1; i < n; i++) {
+    # Replace successful regex assertions so comparison and diff stay literal.
+    if (e[i] ~ /^[|@]~/ && substr(e[i], 1, 1) == substr(a[i], 1, 1) &&
+        match(substr(a[i], 3), substr(e[i], 3)) == 1 && RLENGTH == length(a[i]) - 2)
+      a[i] = e[i]
+    res = res a[i] "\n"
+  }
+  return res
 }
 function prefixFile(prefix, fname,   l,res,err) {
   while ((err = getline l < fname) > 0)

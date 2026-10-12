@@ -1,0 +1,74 @@
+Stdout and stderr
+=================
+
+$ echo 'version: 1.2.3'; echo 'warning: 42' >&2; exit 7
+|~version: [0-9]+\.[0-9]+\.[0-9]+
+@~warning: [0-9]+
+? 7
+
+Mixed literal and regex assertions
+==================================
+
+$ printf 'start\n1.2.3\nend\n'; printf 'warning: 42\ndone\n' >&2
+| start
+|~[0-9]+\.[0-9]+\.[0-9]+
+| end
+@~warning: [0-9]+
+@ done
+
+Alternation applies to the whole line
+=====================================
+
+$ printf 'foo\nbar\nfoobar\n'
+|~foo|bar
+|~foo|bar
+|~foo|foobar
+
+Whitespace is significant
+==========================
+
+$ printf ' 42 \n'
+|~ [0-9]+[ ]
+
+Empty patterns and empty output lines
+=====================================
+
+$ printf '\n\n'; printf '\n' >&2
+|~
+|~.*
+@~
+
+Literal metacharacters and markers
+==================================
+
+$ printf '~literal\n*literal\n[0-9]+\n01\n'; printf '~literal\n' >&2
+| ~literal
+| *literal
+| [0-9]+
+| 01
+@ ~literal
+
+Backslashes and explicitly requested substring matching
+=======================================================
+
+$ printf 'a\\b\nprefix connection refused suffix\n'
+|~a\\b
+|~.*connection refused.*
+
+Explicit anchors and character classes
+======================================
+
+$ printf 'ABC42\n'
+|~^[[:upper:]]+[[:digit:]]+$
+
+One arbitrary line
+==================
+
+$ echo anything
+|~.*
+
+Output without a trailing newline
+==================================
+
+$ printf '1.2.3'
+|~[0-9]+\.[0-9]+\.[0-9]+
