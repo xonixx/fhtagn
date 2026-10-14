@@ -1,7 +1,7 @@
 # vim: syntax=bash
 @options timing
 
-@define NEXT_VERSION  '0.3.0'
+@define NEXT_VERSION  '0.3.1'
 @define GOAWK_VERSION '1.31.0' # https://github.com/benhoyt/goawk/releases
 @define GOAWK         "./soft/goawk$GOAWK_VERSION"
 
