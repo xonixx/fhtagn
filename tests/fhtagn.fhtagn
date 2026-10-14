@@ -106,3 +106,163 @@ omit a var - only provided vars substitute
 ==========================================
 
 $ {{FHTAGN}} FOO=foo BAR=bar tests/5-expand-vars/case5-partial.fhtagn
+
+REGEX TESTS
+============
+
+$ {{FHTAGN}} tests/6-regex/case1-success.fhtagn
+
+$ ALL=1 {{FHTAGN}} tests/6-regex/case1-success.fhtagn
+| result=SUCCESS, failure=0, success=10, total=10, files=1
+
+Fail fast, showing successful regex assertions as unchanged context
+==================================================================
+
+$ ./tests/trimBlank.sh {{FHTAGN}} tests/6-regex/case2-error.fhtagn
+| tests/6-regex/case2-error.fhtagn:1: $ printf '1.2.3\nwrong\n'; echo 'warning: 42' >&2
+| --- expected
+| +++ actual
+| @@ -1,4 +1,4 @@
+|  |~[0-9]+\.[0-9]+\.[0-9]+
+| -| right
+| +| wrong
+|  @~warning: [0-9]+
+| ---blank---
+? 1
+
+Run all mismatches, then verify matching continues in the next file
+==================================================================
+
+$ ALL=1 ./tests/trimBlank.sh {{FHTAGN}} tests/6-regex/case2-error.fhtagn tests/6-regex/case1-success.fhtagn
+| tests/6-regex/case2-error.fhtagn:1: $ printf '1.2.3\nwrong\n'; echo 'warning: 42' >&2
+| --- expected
+| +++ actual
+| @@ -1,4 +1,4 @@
+|  |~[0-9]+\.[0-9]+\.[0-9]+
+| -| right
+| +| wrong
+|  @~warning: [0-9]+
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:6: $ echo 'prefix 1.2.3 suffix'
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -|~[0-9]+\.[0-9]+\.[0-9]+
+| +| prefix 1.2.3 suffix
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:9: $ echo foobar
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -|~foo|bar
+| +| foobar
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:12: $ echo foofoo
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -|~foo|bar
+| +| foofoo
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:15: $ echo '1.2.3' >&2
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -|~[0-9]+\.[0-9]+\.[0-9]+
+| +@ 1.2.3
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:18: $ echo '1.2.3'
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -@~[0-9]+\.[0-9]+\.[0-9]+
+| +| 1.2.3
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:21: $ printf 'foo\nextra\n'
+| --- expected
+| +++ actual
+| @@ -1,2 +1,3 @@
+|  |~.*
+| +| extra
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:24: $ echo foo
+| --- expected
+| +++ actual
+| @@ -1,3 +1,2 @@
+|  |~foo
+| -|~.*
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:28: $ :
+| --- expected
+| +++ actual
+| @@ -1,2 +1 @@
+| -|~.*
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:31: $ :
+| --- expected
+| +++ actual
+| @@ -1,2 +1 @@
+| -|~
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:34: $ echo '42'
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -|~ [0-9]+
+| +| 42
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:37: $ echo ' 42'
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -|~[0-9]+
+| +|  42
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:40: $ printf 'abc\n1\n'
+| --- expected
+| +++ actual
+| @@ -1,3 +1,3 @@
+|  |~[[:alpha:]]+
+| -| 01
+| +| 1
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:44: $ printf 'bar\nfoo\n'
+| --- expected
+| +++ actual
+| @@ -1,3 +1,3 @@
+| -|~foo
+| -|~bar
+| +| bar
+| +| foo
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:48: $ echo 'warning: abc' >&2
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -@~warning: [0-9]+
+| +@ warning: abc
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:51: $ echo foo; exit 7
+| --- expected
+| +++ actual
+| @@ -1,3 +1,3 @@
+|  |~foo
+| -?~[0-9]+
+| +? 7
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:55: $ echo foo
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -|~
+| +| foo
+| ---blank---
+| tests/6-regex/case2-error.fhtagn:58: $ echo '1x2y3'
+| --- expected
+| +++ actual
+| @@ -1,2 +1,2 @@
+| -|~[0-9]+\.[0-9]+\.[0-9]+
+| +| 1x2y3
+| ---blank---
+| result=FAIL, failure=18, success=10, total=28, files=2
+? 1

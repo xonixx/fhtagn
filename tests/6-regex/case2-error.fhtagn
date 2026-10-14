@@ -1,0 +1,59 @@
+$ printf '1.2.3\nwrong\n'; echo 'warning: 42' >&2
+|~[0-9]+\.[0-9]+\.[0-9]+
+| right
+@~warning: [0-9]+
+
+$ echo 'prefix 1.2.3 suffix'
+|~[0-9]+\.[0-9]+\.[0-9]+
+
+$ echo foobar
+|~foo|bar
+
+$ echo foofoo
+|~foo|bar
+
+$ echo '1.2.3' >&2
+|~[0-9]+\.[0-9]+\.[0-9]+
+
+$ echo '1.2.3'
+@~[0-9]+\.[0-9]+\.[0-9]+
+
+$ printf 'foo\nextra\n'
+|~.*
+
+$ echo foo
+|~foo
+|~.*
+
+$ :
+|~.*
+
+$ :
+|~
+
+$ echo '42'
+|~ [0-9]+
+
+$ echo ' 42'
+|~[0-9]+
+
+$ printf 'abc\n1\n'
+|~[[:alpha:]]+
+| 01
+
+$ printf 'bar\nfoo\n'
+|~foo
+|~bar
+
+$ echo 'warning: abc' >&2
+@~warning: [0-9]+
+
+$ echo foo; exit 7
+|~foo
+?~[0-9]+
+
+$ echo foo
+|~
+
+$ echo '1x2y3'
+|~[0-9]+\.[0-9]+\.[0-9]+

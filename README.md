@@ -86,6 +86,35 @@ tests/3.fhtagn:7: $ echo bbb
 result=FAIL, failure=2, success=4, total=6, files=3
 ```
 
+### Regex matching
+
+Use `|~pattern` to match a stdout line or `@~pattern` to match a stderr line:
+
+```text
+$ echo 'version: 1.2.3'; echo 'warning: 42' >&2
+|~version: [0-9]+\.[0-9]+\.[0-9]+
+@~warning: [0-9]+
+```
+
+Patterns use AWK extended regular expressions and must match the whole line.
+For a substring match, surround the pattern with `.*`, for example
+`|~.*connection refused.*`. Each assertion matches exactly one line; extra or
+missing output lines still fail, and output order and stream must match.
+Literal and regex assertions can be mixed. Exit-code assertions remain literal.
+
+Everything after `~` is the pattern, including whitespace and backslashes.
+There are no `/…/` delimiters or additional escaping: use `\.` for a literal dot.
+`|~ abc` requires a leading space, `|~` matches only an empty line, and `|~.*`
+matches any single line, including an empty one. To expect literal output starting
+with `~`, use the usual space: `| ~text`.
+
+On failure, the diff shows unmatched patterns against actual output. Successful
+regex assertions appear unchanged in the diff, even when another assertion fails.
+
+Patterns must be valid for your AWK implementation. An invalid regex causes a
+native AWK error and aborts the run, even with `ALL=1`. It may leave temporary
+files because AWK can skip the cleanup in `END` on such errors.
+
 ### Parameterized tests
 
 You can use variable substitution to parametrize tests. This works like so:
@@ -106,4 +135,3 @@ And you run it like so:
 The example use case here is to check the correctness of the same command when ran by different versions of a programming language. This is what we do to test fhtagn itself with different AWKs: [link1](https://github.com/xonixx/fhtagn/blob/c3986e11757a05b8b3932b4eec204cbfdb31874b/tests/fhtagn.tush#L2), [link2](https://github.com/xonixx/fhtagn/blob/c3986e11757a05b8b3932b4eec204cbfdb31874b/Makesurefile#L74), [link3](https://github.com/xonixx/fhtagn/blob/c3986e11757a05b8b3932b4eec204cbfdb31874b/Makesurefile#L53).
 
 Note that in case of test failure, you will see an expanded command line, which is helpful for debugging.
-
